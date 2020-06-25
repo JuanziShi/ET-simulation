@@ -9,11 +9,15 @@ import collection_of_functions as cf
 import numpy as np
 import matplotlib.pyplot as plt
 
-# singele dipole orientation
-dip_ori = np.array([0, 1, 0])
+# singele dipole orientation, 
+# dipole is placed on yz plane, light come from x axis
+# (x, y, z), y - 90 degree, z - 180 degree 
+theta = np.array([0, 90]) # input polar angles in degree
+dip_ori = cf.get_dip_ori_2d (theta)
 
-# multiple dipole orientation
-# dip_ori = np.array([[1, 0, 0],[0, 1, 0]]).T
+# excitation and emission angles
+ex_angles  = np.linspace( 0, 180, 181 )
+em_angles  = np.linspace( 0, 180, 181 )
 
 # excitation electric field
 E_excitation = cf.get_ex_electric_field()
@@ -35,24 +39,17 @@ I_emission = E_emission ** 2
 
 # ex * em = 2D polarization image
 I_absorption = np.matrix(I_absorption)
- 
+I_emission = np.matrix(I_emission).T 
+
+I = np.dot(I_absorption, I_emission)
+
+# plot 2D portrait
+plt.figure()
+ax = plt.imshow(I)
+plt.gca().invert_yaxis()
+plt.draw()
 
 
-I_absorption = I_absorption.reshape(1,I_absorption.shape[0])
-
-I = np.dot(I_emission, I_absorption)
-
-
-
-
-t1 = np.array([1, 2, 3])
-t2 = t1.reshape(1,t1.shape[0])
-d12 = np.determinant(t1,t2)
-d21 = np.dot(t2,t1)
-
-t1 = np.matrix([1, 2, 3])
-t2 = t1.T
-d21 = np.dot(t2,t1)
 
 
 
