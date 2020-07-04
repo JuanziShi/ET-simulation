@@ -19,7 +19,7 @@ et_matrix = np.matrix([[0, 1],
 # singele dipole orientation, 
 # dipole is placed on yz plane, light come from x axis
 # (x, y, z), y - 90 degree, z - 180 degree 
-theta = np.array([0, 90]) # input polar angles in degree
+theta = np.array([0,30]) # input polar angles in degree
 dip_ori = cf.get_dip_ori_2d (theta)
 
 # excitation and emission angles
@@ -53,9 +53,27 @@ I_absorption_after_et = np.dot(I_absorption, et_matrix)
 I_ex_em = np.dot(I_absorption_after_et, I_emission.T)
 I_ex_em = I_ex_em.T
 
+# compute M_ex, phase_ex(degree), M_em, phase_em(degree), 
+I0, M_ex, phase_ex, M_em, phase_em = cf.compute_ex_em_modulation_phase (I_ex_em)
+
+'''
+# the way I calculate I0, M_ex, phase_ex, M_em, phase_em is fit with 
+# the equation I = I0 * (1 + M_em * np.cos(2 * (em_angles * np.pi / 180 - phase_em * np.pi / 180)))
+
+I_ex = I0 * (1 + M_ex * np.cos(2 * (ex_angles * np.pi / 180 - phase_ex * np.pi / 180)))
+I_em = I0 * (1 + M_em * np.cos(2 * (em_angles * np.pi / 180 - phase_em * np.pi / 180)))
+plt.figure()
+plt.plot(ex_angles, I_ex, 'b', em_angles, I_em, 'r')
+plt.draw()
+'''
+
+
+
+
 # plot 2D portrait and ex em curve
 plt.figure()
 ax1 = plt.subplot(121)
+plt.imshow(I_ex_em)
 plt.xlabel('ex')
 plt.ylabel('em')
 plt.gca().invert_yaxis()
