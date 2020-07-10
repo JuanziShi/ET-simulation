@@ -20,6 +20,7 @@ def get_dip_ori_2d (theta):
     
     # polar angle in radian
     theta = theta*np.pi/180 
+    
     #azimuthal angle is always pi/2, so the dipole is placed on yz plane
     phi = np.ones(theta.size)*np.pi/2 
     
@@ -29,8 +30,8 @@ def get_dip_ori_2d (theta):
     dip_ori[1,:] = np.sin(phi)*np.sin(theta) # y
     dip_ori[2,:] = np.cos(theta)             # z
     
-    # remove numerical noise
-    dip_ori[dip_ori < 1e-10] = 0
+    # to remove the numerical noise
+    dip_ori[0,:] = dip_ori[0,:] * 0 
     
     return dip_ori
  
@@ -64,7 +65,7 @@ def get_ex_electric_field():
     ex_ori[:,2] = np.cos(theta)             # z
     
     # to remove the numerical noise
-    ex_ori[:,0] = ex_ori[:,0]*0 
+    ex_ori[:,0] = ex_ori[:,0] * 0 
     
     # plot the excitation E field 
     # plt.scatter( ex_ori[:,1], ex_ori[:,2])
@@ -101,7 +102,7 @@ def get_em_polarizer():
     em_ori[:,2] = np.cos(theta)             # z
     
     # to remove numerical noise
-    em_ori[:,0] = em_ori[:,0]*0 
+    em_ori[:,0] = em_ori[:,0] * 0 
     
     # plot the excitation E field 
     # plt.scatter( em_ori[:,1], em_ori[:,2])
@@ -160,11 +161,11 @@ def SFA_full_func( params, ex_angles, em_angles, md_ex, phase_ex ):
     Fnoet /= (2.0+gr)    # irrelevant, because we sum-normalize below!
     Fnoet /= np.sum(Fnoet)
 
-    # Fet   = .25 * (1+md_ex*np.cos(2*(EX-phase_ex))) * (1+md_fu*np.cos(2*(EM-th_fu-phase_ex)))
     Fet   = .25 * (1+md_ex*np.cos(2*(EX-phase_ex))) * (1+md_fu*np.cos(2*(EM-th_fu)))
     Fet  /= np.sum(Fet)
 
     return et*Fet + (1-et)*Fnoet
+
 
 def SFA_full_error( params, ex_angles, em_angles, md_ex, phase_ex, Ftot ):
     diff = Ftot - SFA_full_func( params, ex_angles, em_angles, md_ex, phase_ex )
@@ -173,7 +174,7 @@ def SFA_full_error( params, ex_angles, em_angles, md_ex, phase_ex, Ftot ):
     # plt.interactive(True)
     # plt.cla()
     # plt.plot( Ftot, 'b' )
-    # plt.plot( SFA_full_func( params, ex_angles, em_angles, md_ex, phase_ex ), 'g' )
+    #plt.plot( SFA_full_func( params, ex_angles, em_angles, md_ex, phase_ex ), 'g' )
     # raise SystemExit
 
     return np.sqrt(np.sum( diff**2 ))
