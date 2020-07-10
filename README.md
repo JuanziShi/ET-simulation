@@ -1,9 +1,10 @@
 # ET-simulation
 
 ex - et - em
-
 projection = dot product = np.dot(a,b)
 
-np.matrix and np.array
+np.matrix and np.array are different
 
-how to do the normalization?
+normalization
+np.sum(Ftotnormed) = 1 
+np.sum(model) = 1
