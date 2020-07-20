@@ -148,8 +148,8 @@ def SFA_full_func( params, ex_angles, em_angles, md_ex, phase_ex ):
     if np.isnan(gr): gr=1.0
     alpha = 0.5 * np.arccos( .5*(((gr+2)*md_ex)-gr) )
 
-    ph_ii_minus = phase_ex -alpha
-    ph_ii_plus  = phase_ex +alpha
+    ph_ii_minus = phase_ex - alpha
+    ph_ii_plus  = phase_ex + alpha
 
     # print EX
     # print EM

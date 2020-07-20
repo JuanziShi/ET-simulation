@@ -71,7 +71,8 @@ def plot_2D_portrait(theta, et_matrix):
     plt.gca().invert_yaxis()
     plt.draw()
     theta_str = str(theta).strip('[]')
-    plt.title(['dipole orientation', theta_str])
+    title_str = 'dipoles orientation =' + theta_str + ' (in degree) '
+    plt.title(title_str, fontsize = 14)
 
     ax2 = plt.subplot(122)
     ax2.plot (ex_angles, np.sum(I_ex_em, 0).T, 'b', em_angles, np.sum(I_ex_em,1), 'r')
