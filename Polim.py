@@ -175,7 +175,6 @@ class Polim:
         return 
 
 
-
     def plot_SFA3(self):
         
         # plot fitting results: model, Fet, Fnoet. 
@@ -194,23 +193,74 @@ class Polim:
         emission_angles_grid    = np.linspace(0,np.pi,4, endpoint=False)
         EX, EM = np.meshgrid(excitation_angles_grid, emission_angles_grid)
         
-        samsum = np.sum(self.Ftot)
-        Fnoet = cf.SFA_full_func( [md_fu,th_fu,gr,0], EX, EM, M_ex, phase_ex )
-        Fet   = cf.SFA_full_func( [md_fu,th_fu,gr,1], EX, EM, M_ex, phase_ex )
-        model = cf.SFA_full_func( [md_fu,th_fu,gr,et], EX, EM, M_ex, phase_ex)
-
-        plt.figure(figsize= [9, 4])
-        plt.interactive(True)
-        plt.cla()
-        plt.plot( samsum*Fet, 'r-', alpha=.4 )
-        plt.plot( samsum*Fnoet, 'b-', alpha=.4 )
-        plt.plot( samsum*model, 'g-', alpha=.4 )
-        plt.plot( self.Ftot, '--', color='gray' )
-        plt.legend(['Fet', 'Fnoet', 'model', 'Ftot'])
-        plt.title( 'md_fu=%f th_fu=%f gr=%f et=%f resi=%f' % (md_fu,th_fu,gr,et,resi))
-        # plt.plot(samsum*(et*Fet + (1-et)*Fnoet)) # equal to model
+        self.samsum = np.sum(self.Ftot)
+        self.Fnoet = cf.SFA_full_func( [md_fu,th_fu,gr,0], EX, EM, M_ex, phase_ex )
+        self.Fet   = cf.SFA_full_func( [md_fu,th_fu,gr,1], EX, EM, M_ex, phase_ex )
+        self.model = cf.SFA_full_func( [md_fu,th_fu,gr,et], EX, EM, M_ex, phase_ex)
         
+        Fnoet_r = self.Fnoet.reshape(np.size(emission_angles_grid),np.size(excitation_angles_grid))
+        Fet_r = self.Fet.reshape(np.size(emission_angles_grid),np.size(excitation_angles_grid))
+        model_r = self.model.reshape(np.size(emission_angles_grid),np.size(excitation_angles_grid))
+        Ftot_r = self.Ftot.reshape(np.size(emission_angles_grid),np.size(excitation_angles_grid))
+
+        
+        fig, ax = plt.subplots(1, 4, sharex='all', sharey='all', figsize=(17, 4))
+        s_em = range(len(emission_angles_grid))
+        
+        for n in s_em:
+           
+            ax[n].scatter(excitation_angles_grid, self.samsum*Fet_r[n], c = 'blue', s = 12, alpha=0.6)
+            ax[n].scatter(excitation_angles_grid, self.samsum*Fnoet_r[n], c = 'green', s = 12, alpha=0.6)
+            ax[n].scatter(excitation_angles_grid, self.samsum*model_r[n], c = 'red', s = 12, alpha=0.6)
+            ax[n].scatter(excitation_angles_grid, Ftot_r[n], c = 'yellow', s = 12, alpha=0.6)
+            
+            ax[n].set_xlim([0, np.pi])
+            ax[n].set_xlabel('ex')
+            ax[n].set_title('em'+str(emission_angles_grid[n]*180/np.pi))
+        
+        
+        plt.legend(['Fet', 'Fnoet', 'model', 'Ftot'])
+        plt.suptitle( 'md_fu=%f th_fu=%f gr=%f et=%f resi=%f' % (md_fu,th_fu,gr,et,resi))
+    
+                
         return
+    
+    
+    # def plot_SFA3(self):
+        
+    #     # plot fitting results: model, Fet, Fnoet. 
+    #     # This is a good way to check fitting property
+        
+    #     md_fu = self.fitresult[0][0]
+    #     th_fu = self.fitresult[0][1]
+    #     gr    = self.fitresult[0][2]
+    #     et    = self.fitresult[0][3]
+    #     resi  = self.fitresult[1]
+        
+    #     M_ex = self.portrait[1]
+    #     phase_ex = self.portrait[2]
+        
+    #     excitation_angles_grid  = np.linspace(0,np.pi,6, endpoint=False)
+    #     emission_angles_grid    = np.linspace(0,np.pi,4, endpoint=False)
+    #     EX, EM = np.meshgrid(excitation_angles_grid, emission_angles_grid)
+        
+    #     samsum = np.sum(self.Ftot)
+    #     Fnoet = cf.SFA_full_func( [md_fu,th_fu,gr,0], EX, EM, M_ex, phase_ex )
+    #     Fet   = cf.SFA_full_func( [md_fu,th_fu,gr,1], EX, EM, M_ex, phase_ex )
+    #     model = cf.SFA_full_func( [md_fu,th_fu,gr,et], EX, EM, M_ex, phase_ex)
+
+    #     plt.figure(figsize= [9, 4])
+    #     plt.interactive(True)
+    #     plt.cla()
+    #     plt.plot( samsum*Fet, 'r-', alpha=.4 )
+    #     plt.plot( samsum*Fnoet, 'b-', alpha=.4 )
+    #     plt.plot( samsum*model, 'g-', alpha=.4 )
+    #     plt.plot( self.Ftot, '--', color='gray' )
+    #     plt.legend(['Fet', 'Fnoet', 'model', 'Ftot'])
+    #     plt.title( 'md_fu=%f th_fu=%f gr=%f et=%f resi=%f' % (md_fu,th_fu,gr,et,resi))
+    #     # plt.plot(samsum*(et*Fet + (1-et)*Fnoet)) # equal to model
+        
+    #     return
     
     
     
