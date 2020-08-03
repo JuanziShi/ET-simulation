@@ -96,7 +96,7 @@ class Polim:
     def plot_2D_portrait(self):
     
         # plot 2D portrait and ex em curve
-        plt.figure(figsize= [9, 4])
+        plt.figure(figsize= [12, 4])
 
         ax1 = plt.subplot(121)
         plt.imshow(self.I_ex_em)
@@ -106,13 +106,14 @@ class Polim:
         plt.draw()
         theta_str = str(self.theta).strip('[]')
         title_str = 'dipoles orientation =' + theta_str + ' (in degree) '
-        plt.title(title_str, fontsize = 14)
+        # plt.title(title_str, fontsize = 14)
 
         ax2 = plt.subplot(122)
         ax2.plot(self.ex_angles, np.sum(self.I_ex_em, 0).T, 'b', self.em_angles, np.sum(self.I_ex_em, 1), 'r')
+        ax2.set_xlim([0, 180])
+        ax2.set_ylim([0, 1.2*np.max(np.sum(self.I_ex_em, 1))])
         plt.xlabel('angles')
         plt.ylabel('intensity')
-        ax2.axis('square')
         
         return    
     
@@ -209,10 +210,10 @@ class Polim:
         
         for n in s_em:
            
-            ax[n].scatter(excitation_angles_grid, self.samsum*Fet_r[n], c = 'blue', s = 12, alpha=0.6)
-            ax[n].scatter(excitation_angles_grid, self.samsum*Fnoet_r[n], c = 'green', s = 12, alpha=0.6)
-            ax[n].scatter(excitation_angles_grid, self.samsum*model_r[n], c = 'red', s = 12, alpha=0.6)
-            ax[n].scatter(excitation_angles_grid, Ftot_r[n], c = 'yellow', s = 12, alpha=0.6)
+            ax[n].plot(excitation_angles_grid, self.samsum*Fet_r[n], 'b>-',  alpha=0.6)
+            ax[n].plot(excitation_angles_grid, self.samsum*Fnoet_r[n], 'go-',  alpha=0.6)
+            ax[n].plot(excitation_angles_grid, self.samsum*model_r[n], 'rd-',  alpha=0.6)
+            ax[n].plot(excitation_angles_grid, Ftot_r[n], 'yp--',  alpha=0.6)
             
             ax[n].set_xlim([0, np.pi])
             ax[n].set_xlabel('ex')

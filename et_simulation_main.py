@@ -6,18 +6,47 @@ Created on Tue Jul 21 10:34:56 2020
 """
 
 import numpy as np
-from Polim import Polim
+import matplotlib.pyplot as plt
 import addcopyfighandler
+import random
+
+from Polim import Polim
+
 
 # input dipole orientation (polar angles) in degree
 # dipole is placed on yz plane, light come from x axis
 # (x, y, z), y - 90 degree, z - 180 degree 
-theta = np.array([0, 60])
+
+# small number of dipolse (mainly for checking)
+# set dipole orientation
+# theta = np.array([0, 60])
+
+# set steady state ET matrix
+# et_matrix = np.matrix([[0.5, 0.5],
+#                       [0, 1]])
+
+
+# large number of dipoles
+
+# set dipole orientation
+theta = np.linspace(0, 180, 1000, endpoint = False)
+# theta = np.array(random.sample(range(0, 180), 100))
 
 # set steady state ET matrix 
 # Note! In the paper and Rafael's program, the np.sum(et.matrix,1) = 1 always.
-et_matrix = np.matrix([[0.5, 0.5],
-                       [0, 1]])
+
+# noET
+# et_matrix = np.eye(1000, dtype = int) 
+
+# ET: one or many funnels
+et_matrix_size = 1000 
+et_matrix = np.matrix([[0.00 for x in range(et_matrix_size)] for y in range(et_matrix_size)] )
+et_matrix[:,0] = 1 # funnel one
+et_matrix[:,200] = 0.3 # funnel two
+et_matrix[:,400] = 0.3 # funnel three
+
+# ET: the case that SFA+3 does not work 
+# et_matrix = np.flip(np.eye(1000, dtype = int), 1)
 
 # create instance P by class Polim
 P = Polim(theta, et_matrix)
