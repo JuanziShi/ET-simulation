@@ -36,17 +36,21 @@ theta = np.linspace(0, 180, 1000, endpoint = False)
 # Note! In the paper and Rafael's program, the np.sum(et.matrix,1) = 1 always.
 
 # noET
-# et_matrix = np.eye(1000, dtype = int) 
+#et_matrix_size = np.size(theta)
+#et_matrix = np.eye(et_matrix_size, dtype = int) 
 
 # ET: one or many funnels
-et_matrix_size = 1000 
-et_matrix = np.matrix([[0.00 for x in range(et_matrix_size)] for y in range(et_matrix_size)] )
-et_matrix[:,0] = 1 # funnel one
-et_matrix[:,200] = 0.3 # funnel two
-et_matrix[:,400] = 0.3 # funnel three
+et_matrix_size = np.size(theta)
+et_matrix = np.matrix([[0.001 for x in range(et_matrix_size)] for y in range(et_matrix_size)] )
+#et_matrix[:,0] = 0.4 # emitter1 
+#et_matrix[:,30] = 0.3 # emitter2 
+#et_matrix[:,60] = 0.3 # emitter3
 
 # ET: the case that SFA+3 does not work 
-# et_matrix = np.flip(np.eye(1000, dtype = int), 1)
+#et_matrix_size = np.size(theta)
+#et_matrix = np.flip(np.eye(et_matrix_size, dtype = int), 1)
+
+
 
 # create instance P by class Polim
 P = Polim(theta, et_matrix)
