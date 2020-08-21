@@ -9,9 +9,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 import collection_of_functions as cf
 import scipy.optimize as so
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+
+plt.rcParams.update({'font.size': 12})
+
 
 
 class Polim:
+    
            
     def __init__(self, theta, et_matrix):
         
@@ -33,6 +38,7 @@ class Polim:
         # fit by SFA3 and plot residue
         self.fitresult = None
         self.Ftot = None
+        
         
         return
    
@@ -72,7 +78,12 @@ class Polim:
         I_absorption_after_et = np.dot(I_absorption, self.et_matrix) 
         self.I_ex_em = np.dot(I_absorption_after_et, I_emission.T)
         self.I_ex_em = self.I_ex_em.T
+        
+        return
     
+    
+    
+    def compute_M_phase_from_original_2D_portrait(self):    
         '''
         # the way I calculate I0, M_ex, phase_ex, M_em, phase_em is fit with 
         # the equation I = I0 * (1 + M_em * np.cos(2 * (em_angles * np.pi / 180 - phase_em * np.pi / 180)))
@@ -83,7 +94,7 @@ class Polim:
         plt.plot(ex_angles, I_ex, 'b', em_angles, I_em, 'r')
         plt.draw()
         '''
-    
+        
         # compute M_ex, phase_ex(in r), M_em, phase_em(in r), 
         I0, M_ex, phase_ex, M_em, phase_em = cf.compute_ex_em_modulation_phase (self.I_ex_em)
         
@@ -96,7 +107,7 @@ class Polim:
     def plot_2D_portrait(self):
     
         # plot 2D portrait and ex em curve
-        plt.figure(figsize= [12, 4])
+        plt.figure(figsize= [17, 4])
 
         ax1 = plt.subplot(121)
         plt.imshow(self.I_ex_em)
@@ -104,9 +115,10 @@ class Polim:
         plt.ylabel('em')
         plt.gca().invert_yaxis()
         plt.draw()
-        theta_str = str(self.theta).strip('[]')
-        title_str = 'dipoles orientation =' + theta_str + ' (in degree) '
+        # theta_str = str(self.theta).strip('[]')
+        # title_str = 'dipoles orientation =' + theta_str + ' (in degree) '
         # plt.title(title_str, fontsize = 14)
+        plt.colorbar()
 
         ax2 = plt.subplot(122)
         ax2.plot(self.ex_angles, np.sum(self.I_ex_em, 0).T, 'b', self.em_angles, np.sum(self.I_ex_em, 1), 'r')
@@ -218,52 +230,14 @@ class Polim:
             ax[n].set_xlim([0, np.pi])
             ax[n].set_xlabel('ex')
             ax[n].set_title('em'+str(emission_angles_grid[n]*180/np.pi))
-        
+            
         
         plt.legend(['Fet', 'Fnoet', 'model', 'Ftot'])
         plt.suptitle( 'md_fu=%f th_fu=%f gr=%f et=%f resi=%f' % (md_fu,th_fu,gr,et,resi))
     
                 
         return
-    
-    
-    # def plot_SFA3(self):
-        
-    #     # plot fitting results: model, Fet, Fnoet. 
-    #     # This is a good way to check fitting property
-        
-    #     md_fu = self.fitresult[0][0]
-    #     th_fu = self.fitresult[0][1]
-    #     gr    = self.fitresult[0][2]
-    #     et    = self.fitresult[0][3]
-    #     resi  = self.fitresult[1]
-        
-    #     M_ex = self.portrait[1]
-    #     phase_ex = self.portrait[2]
-        
-    #     excitation_angles_grid  = np.linspace(0,np.pi,6, endpoint=False)
-    #     emission_angles_grid    = np.linspace(0,np.pi,4, endpoint=False)
-    #     EX, EM = np.meshgrid(excitation_angles_grid, emission_angles_grid)
-        
-    #     samsum = np.sum(self.Ftot)
-    #     Fnoet = cf.SFA_full_func( [md_fu,th_fu,gr,0], EX, EM, M_ex, phase_ex )
-    #     Fet   = cf.SFA_full_func( [md_fu,th_fu,gr,1], EX, EM, M_ex, phase_ex )
-    #     model = cf.SFA_full_func( [md_fu,th_fu,gr,et], EX, EM, M_ex, phase_ex)
-
-    #     plt.figure(figsize= [9, 4])
-    #     plt.interactive(True)
-    #     plt.cla()
-    #     plt.plot( samsum*Fet, 'r-', alpha=.4 )
-    #     plt.plot( samsum*Fnoet, 'b-', alpha=.4 )
-    #     plt.plot( samsum*model, 'g-', alpha=.4 )
-    #     plt.plot( self.Ftot, '--', color='gray' )
-    #     plt.legend(['Fet', 'Fnoet', 'model', 'Ftot'])
-    #     plt.title( 'md_fu=%f th_fu=%f gr=%f et=%f resi=%f' % (md_fu,th_fu,gr,et,resi))
-    #     # plt.plot(samsum*(et*Fet + (1-et)*Fnoet)) # equal to model
-        
-    #     return
-    
-    
+       
     
     def reconstruct_Ftot_Fet_Fnoet(self):
     
@@ -297,34 +271,58 @@ class Polim:
         modelfine  = et * Fetfine + (1 - et) * Fnoetfine
     
         # note: np.sum(modelfine) = 1, np.sum(Fetfine) = 1, np.sum(Fnoetfine) = 1
+        
+        fig, (ax1, ax2, ax3) = plt.subplots(figsize = (17, 4), ncols = 3)
+        
+        h_model = ax1.imshow(np.sum(self.I_ex_em) * modelfine)
+        ax1.invert_yaxis()       
+        ax1.set_title('model')       
+        divider1 = make_axes_locatable(ax1)
+        cax1 = divider1.append_axes("right", size="5%", pad=0.05)
+        fig.colorbar(h_model, cax = cax1, ax = ax1)
+                
+        h_Fet = ax2.imshow(np.sum(self.I_ex_em) * Fetfine)
+        ax2.invert_yaxis()       
+        ax2.set_title('Fet')       
+        divider2 = make_axes_locatable(ax2)
+        cax2 = divider2.append_axes("right", size="5%", pad=0.05)
+        fig.colorbar(h_Fet, cax = cax2, ax = ax2)
+        
+        h_Fnoet = ax3.imshow(np.sum(self.I_ex_em) * Fnoetfine)
+        ax3.invert_yaxis()       
+        ax3.set_title('Fnoet')       
+        divider3 = make_axes_locatable(ax3)
+        cax3 = divider3.append_axes("right", size="5%", pad=0.05)
+        fig.colorbar(h_Fnoet, cax = cax3, ax = ax3)
+        
+        
+        
+        # plt.figure(figsize=(12, 4))
     
-        plt.figure(figsize=(12, 4))
+        # plt.subplot(1, 4, 1)
+        # plt.imshow(modelfine)
+        # plt.gca().invert_yaxis()
+        # plt.title('model')
+        # plt.colorbar()
     
-        plt.subplot(1, 4, 1)
-        plt.imshow(modelfine)
-        plt.gca().invert_yaxis()
-        plt.title('model')
-    
-    
-        plt.subplot(1, 4, 2)
-        plt.imshow(Fetfine)
-        plt.gca().invert_yaxis()
-        plt.title('Fet')
+        # plt.subplot(1, 4, 2)
+        # plt.imshow(Fetfine)
+        # plt.gca().invert_yaxis()
+        # plt.title('Fet')
+        # plt.colorbar()
 
-        plt.subplot(1, 4, 3)
-        plt.imshow(Fnoetfine)
-        plt.gca().invert_yaxis()
-        plt.title('Fnoet' )    
+        # plt.subplot(1, 4, 3)
+        # plt.imshow(Fnoetfine)
+        # plt.gca().invert_yaxis()
+        # plt.title('Fnoet' )
+        # plt.colorbar()
     
-        plt.subplot(1, 4, 4)
-        plt.text(0.1, 0.5, 'et = %f' % et)
-        plt.axis('off')
-     
+        # plt.subplot(1, 4, 4)
+        # plt.text(0.1, 0.5, 'et = %f' % et)
+        # plt.axis('off')
         return
     
     
-
-
 
 
 
