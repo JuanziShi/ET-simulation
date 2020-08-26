@@ -11,9 +11,6 @@ import collection_of_functions as cf
 import scipy.optimize as so
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-plt.rcParams.update({'font.size': 12})
-
-
 
 class Polim:
     
@@ -107,7 +104,7 @@ class Polim:
     def plot_2D_portrait(self):
     
         # plot 2D portrait and ex em curve
-        plt.figure(figsize= [17, 4])
+        plt.figure(figsize = [17, 4])
 
         ax1 = plt.subplot(121)
         plt.imshow(self.I_ex_em)
@@ -233,7 +230,8 @@ class Polim:
             
         
         plt.legend(['Fet', 'Fnoet', 'model', 'Ftot'])
-        plt.suptitle( 'md_fu=%f th_fu=%f gr=%f et=%f resi=%f' % (md_fu,th_fu,gr,et,resi))
+        th_fu_deg = th_fu*180/np.pi
+        plt.suptitle( 'md_fu=%f th_fu=%f gr=%f et=%f resi=%f' % (md_fu, th_fu, gr, et, resi))
     
                 
         return
@@ -322,6 +320,43 @@ class Polim:
         # plt.axis('off')
         return
     
+    
+    
+    def quick_check_funnel_and_dipoles(self):
+        
+        # funnel property
+        md_fu = self.fitresult[0][0]
+        th_fu = self.fitresult[0][1]
+        et    = self.fitresult[0][3]
+        
+        # calculate intensity of each dipole
+        et_matrix_dip = np.array(self.et_matrix)
+        I_dip = np.sum(et_matrix_dip, 0) / np.size(self.theta)
+         
+        # bl - baseline
+        bl = 0
+        
+              
+        plt.figure(figsize = (17, 4))
+        # plot baseline
+        plt.plot([0, 180], [bl, bl], 'k', linewidth = 7)
+        plt.xlim(-2, 182)
+        plt.ylim(-0.2, 1.2)
+
+        # plot dipoles
+        n_dip = range(len(self.theta))
+        for n in n_dip: 
+                plt.plot((self.theta[n], self.theta[n]), (bl, I_dip[n]), 'k', linewidth = 7)
+                plt.text(self.theta[n], I_dip[n] + 0.2, ' md_dip=%0.3f \n th_dip=%0.3f \n I=%0.3f ' % (1, self.theta[n], I_dip[n]), fontsize = 12)
+    
+ 
+        # plot funnel
+        th_fu_deg = th_fu * 180 / np.pi
+        plt.plot((th_fu_deg, th_fu_deg), (bl, et), 'r', alpha = 1, linewidth = 4)
+        plt.text(th_fu_deg, et, ' md_fu=%0.3f \n th_fu=%0.3f \n et=%0.3f ' % (md_fu, th_fu_deg, et), fontsize = 12)
+
+        
+        
     
 
 
