@@ -32,24 +32,32 @@ M_f = 1.0
 theta_f = 30 * np.pi/180
 
 
-noet = 1 - I_f
+I_noet = 1 - I_f
+M_noet = 0.433
+theta_noet = 45 * np.pi/180
+
+
 
 I1 = I_1 * (M_1 * np.cos(2*(phi-theta_1))+1)
 I2 = I_2 * (M_2 * np.cos(2*(phi-theta_2))+1)
 I3 = I_3 * (M_3 * np.cos(2*(phi-theta_3))+1)
 I4 = I_4 * (M_4 * np.cos(2*(phi-theta_4))+1)
-If = I_f * (M_f * np.cos(2*(phi-theta_f))+1) + noet
+If = I_f * (M_f * np.cos(2*(phi-theta_f))+1)
+Inoet = I_noet * (M_noet * np.cos(2*(phi-theta_noet))+1)
+
 
 
 plt.figure()
-plt.plot(phi * 180/np.pi, I1, 'b')
-plt.plot(phi * 180/np.pi, I2, 'g')
-plt.plot(phi * 180/np.pi, I3, 'm')
+plt.plot(phi * 180/np.pi, I1, 'k')
+plt.plot(phi * 180/np.pi, I2, 'k')
+plt.plot(phi * 180/np.pi, I3, 'k')
 plt.plot(phi * 180/np.pi, I4, 'k')
-plt.plot(phi * 180/np.pi, If, 'r')
+plt.plot(phi * 180/np.pi, If, 'b--')
+plt.plot(phi * 180/np.pi, Inoet, 'g--')
+plt.plot(phi * 180/np.pi, If + Inoet, 'r')
 plt.plot(phi * 180/np.pi, I1+I2+I3+I4, 'yp--')
 
-plt.legend(['emitter1', 'emitter2', 'emitter3', 'emitter4', 'single funnel', 'emitter1+2+3+4'])
+plt.legend(['emitter1', 'emitter2', 'emitter3', 'emitter4', 'et(single funnel)', 'no et', 'model', 'emitter1+2+3+4'])
 
 # the calculation of noet part or Mex is missed
 # that is why the curve does can not be reconstruct
