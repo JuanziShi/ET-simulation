@@ -142,11 +142,11 @@ class Polim:
         phase_ex = self.portrait[2]
                 
         # starting point
-        a0 = [M_ex, phase_ex, 1, .5]
+        a0 = [M_ex, phase_ex, 1.0, .5]
 
         # boundry
-        LB = [0.001,    phase_ex - np.pi/2, 0, 0]
-        UB = [0.999999, phase_ex + np.pi/2, 2 * (1 + M_ex)/(1 - M_ex)*.999, 1]
+        LB = [0.000001,    phase_ex - np.pi/2, 0.00, 0.00]
+        UB = [0.999999, phase_ex + np.pi/2, 2 * (1 + M_ex)/(1 - M_ex)*.999, 1.00]
 
         # I_ex_em 181*181. select data and put in Ftotnormed 4*6  
         column_index = list(range(0,180,30)) # coordinate - angels - intensity. 6 angles for excitation
@@ -293,7 +293,9 @@ class Polim:
         cax3 = divider3.append_axes("right", size="5%", pad=0.05)
         fig.colorbar(h_Fnoet, cax = cax3, ax = ax3)
         
-        
+        self.modelfine_output = modelfine
+        self.Fetfine_output = Fetfine
+        self.Fnoetfine_output = Fnoetfine
         
         # plt.figure(figsize=(12, 4))
     
@@ -347,7 +349,7 @@ class Polim:
         n_dip = range(len(self.theta))
         for n in n_dip: 
                 plt.plot((self.theta[n], self.theta[n]), (bl, I_dip[n]), 'k', linewidth = 7)
-                plt.text(self.theta[n], I_dip[n] + 0.2, ' md_dip=%0.3f \n th_dip=%0.3f \n I=%0.3f ' % (1, self.theta[n], I_dip[n]), fontsize = 12)
+                plt.text(self.theta[n], I_dip[n] + 0.2, ' md_dip=%0.1f \n th_dip=%0.1f \n I=%0.3f ' % (1, self.theta[n], I_dip[n]), fontsize = 12)
     
  
         # plot funnel
