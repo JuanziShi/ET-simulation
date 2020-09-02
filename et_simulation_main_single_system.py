@@ -17,31 +17,14 @@ plt.rcParams.update({'font.size': 12})
 # dipole is placed on yz plane, light come from x axis
 # (x, y, z), y - 90 degree, z - 180 degree 
 
-## small number of dipolse (mainly for checking)
-## set dipole orientation in degree
-#theta = np.array([0, 60, 100, 160, 80, 20])
-#
-## set steady state ET matrix
-#et_matrix = np.matrix([
-#                       [0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
-#                       [1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-#                       [0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
-#                       [0.0, 0.0, 1.0, 0.0, 0.0, 0.0],
-#                       [0.0, 0.0, 0.0, 0.0, 0.0, 1.0],
-#                       [0.0, 0.0, 0.0, 0.0, 1.0, 0.0]
-#                       ])
-#assert np.sum(et_matrix) == np.size(theta), 'et_matrix is wrong'
-
-
 # small number of dipolse (mainly for checking)
-# set dipole orientation in degree
+# set dipole orientation
 theta = np.array([0, 60])
 
 # set steady state ET matrix
-et_matrix = np.matrix([[0.4, 0.6],
-                       [0.6, 0.4]])
-assert np.sum(et_matrix) == np.size(theta), 'et_matrix is wrong'
-                       
+et_matrix = np.matrix([[0.0, 1.0],
+                       [1.0, 0.0]])
+assert np.sum(et_matrix) == np.size(theta), 'et_matrix is wrong'                
 
 
 # large number of dipoles
@@ -89,4 +72,4 @@ P.reconstruct_Ftot_Fet_Fnoet()
 # compare the funnel with dipoles
 P.quick_check_funnel_and_dipoles()
 
-
+Inoet = np.sum(P.Fnoetfine_output,0)

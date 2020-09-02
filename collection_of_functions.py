@@ -108,7 +108,7 @@ def get_em_polarizer():
     return em_ori
     
 
-def compute_ex_em_modulation_phase(I_ex_em):
+def compute_ex_em_modulation_phase(I_ex_em, theta):
     '''Maybe in the furture the CosineFitter_new is needed.
     Now I calculate modulation depth and phases by the sum of 2D portrait'''
     
@@ -121,16 +121,18 @@ def compute_ex_em_modulation_phase(I_ex_em):
     # calculate ex modulation depth and phase
     M_ex = (np.amax(I_ex) - np.amin(I_ex))/(np.amax(I_ex) + np.amin(I_ex))
     if M_ex < 1e-6:
-        M_ex = 0
-    
-    phase_ex = np.argmax(I_ex) * np.pi / 180
+        M_ex = 0.0
+        phase_ex = np.mean(theta) * np.pi / 180
+    else:
+        phase_ex = np.argmax(I_ex) * np.pi / 180
     
     # calculate em modulation depth and phase
     M_em = (np.amax(I_em) - np.amin(I_em))/(np.amax(I_em) + np.amin(I_em))
     if M_em < 1e-6:
-        M_em = 0
-    
-    phase_em = np.argmax(I_em) * np.pi / 180
+        M_em = 0.0
+        phase_em = np.mean(theta) * np.pi / 180
+    else:
+        phase_em = np.argmax(I_em) * np.pi / 180
     
     return I0, M_ex, phase_ex, M_em, phase_em 
     

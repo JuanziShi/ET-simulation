@@ -36,6 +36,11 @@ class Polim:
         self.fitresult = None
         self.Ftot = None
         
+        # reconstruct_Ftot_Fet_Fnoet
+        self.modelfine_output = None
+        self.Fetfine_output = None
+        self.Fnoetfine_output = None
+        
         
         return
    
@@ -93,7 +98,7 @@ class Polim:
         '''
         
         # compute M_ex, phase_ex(in r), M_em, phase_em(in r), 
-        I0, M_ex, phase_ex, M_em, phase_em = cf.compute_ex_em_modulation_phase (self.I_ex_em)
+        I0, M_ex, phase_ex, M_em, phase_em = cf.compute_ex_em_modulation_phase (self.I_ex_em, self.theta)
         
         self.portrait = [I0, M_ex, phase_ex, M_em, phase_em]
         
@@ -145,8 +150,8 @@ class Polim:
         a0 = [M_ex, phase_ex, 1.0, .5]
 
         # boundry
-        LB = [0.000001,    phase_ex - np.pi/2, 0.00, 0.00]
-        UB = [0.999999, phase_ex + np.pi/2, 2 * (1 + M_ex)/(1 - M_ex)*.999, 1.00]
+        LB = [0.001,    phase_ex - np.pi/2, 0.0000, 0.0000]
+        UB = [0.999999, phase_ex + np.pi/2, 2 * (1 + M_ex)/(1 - M_ex)*.999, 1.000]
 
         # I_ex_em 181*181. select data and put in Ftotnormed 4*6  
         column_index = list(range(0,180,30)) # coordinate - angels - intensity. 6 angles for excitation
@@ -297,29 +302,6 @@ class Polim:
         self.Fetfine_output = Fetfine
         self.Fnoetfine_output = Fnoetfine
         
-        # plt.figure(figsize=(12, 4))
-    
-        # plt.subplot(1, 4, 1)
-        # plt.imshow(modelfine)
-        # plt.gca().invert_yaxis()
-        # plt.title('model')
-        # plt.colorbar()
-    
-        # plt.subplot(1, 4, 2)
-        # plt.imshow(Fetfine)
-        # plt.gca().invert_yaxis()
-        # plt.title('Fet')
-        # plt.colorbar()
-
-        # plt.subplot(1, 4, 3)
-        # plt.imshow(Fnoetfine)
-        # plt.gca().invert_yaxis()
-        # plt.title('Fnoet' )
-        # plt.colorbar()
-    
-        # plt.subplot(1, 4, 4)
-        # plt.text(0.1, 0.5, 'et = %f' % et)
-        # plt.axis('off')
         return
     
     
@@ -349,7 +331,7 @@ class Polim:
         n_dip = range(len(self.theta))
         for n in n_dip: 
                 plt.plot((self.theta[n], self.theta[n]), (bl, I_dip[n]), 'k', linewidth = 7)
-                plt.text(self.theta[n], I_dip[n] + 0.2, ' md_dip=%0.1f \n th_dip=%0.1f \n I=%0.3f ' % (1, self.theta[n], I_dip[n]), fontsize = 12)
+                plt.text(self.theta[n], I_dip[n] + 0.2, ' md_dip=%0.3f \n th_dip=%0.3f \n I=%0.3f ' % (1, self.theta[n], I_dip[n]), fontsize = 12)
     
  
         # plot funnel
