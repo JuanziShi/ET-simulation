@@ -14,6 +14,8 @@ from Polim import Polim
 
 plt.rcParams.update({'font.size': 12})
 
+# Hello git
+
 
 # because we generate dipole randomly, so the calculation needs to be run for several times. 
 # The resutls can be different and save in funnel_***.
