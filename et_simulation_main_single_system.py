@@ -19,11 +19,18 @@ plt.rcParams.update({'font.size': 12})
 
 # small number of dipolse (mainly for checking)
 # set dipole orientation
-theta = np.array([0, 60])
+theta = np.array([0, 30])
+
+# select dipoles to excite by generate a logic matrix. 1 means excite, 0 means not excite.
+bl = np.array([1, 0])
+bl = (bl == 1)
+assert np.size(bl) == np.size(theta), 'bl array is wrong'
+
 
 # set steady state ET matrix
 et_matrix = np.matrix([[0.0, 1.0],
-                       [1.0, 0.0]])
+                       [0.0, 1.0],
+                       ])
 assert np.sum(et_matrix) == np.size(theta), 'et_matrix is wrong'                
 
 
@@ -54,7 +61,7 @@ assert np.sum(et_matrix) == np.size(theta), 'et_matrix is wrong'
 
 plt.close('all')
 # create instance P by class Polim
-P = Polim(theta, et_matrix)
+P = Polim(theta, bl, et_matrix)
 
 # compute and plot 2D portrait
 P.compute_2D_portrait()
@@ -72,4 +79,41 @@ P.reconstruct_Ftot_Fet_Fnoet()
 # compare the funnel with dipoles
 P.quick_check_funnel_and_dipoles()
 
-Inoet = np.sum(P.Fnoetfine_output,0)
+
+
+
+
+# test= np.array([[0,   1,   2,   3],
+#                [5,   15,   20,   32],
+#                [10,  11,   21,   13]])
+
+# bl = np.array([1, 0, 1, 1])
+# bl = (bl == 1)
+
+# test_c = np.zeros(np.shape(test))
+# test_c[:,bl] = test[:,bl]
+
+# print (test_c)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -15,10 +15,11 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 class Polim:
     
            
-    def __init__(self, theta, et_matrix):
+    def __init__(self, theta, bl, et_matrix):
         
         # input
         self.theta = theta
+        self.bl = bl
         self.et_matrix = et_matrix
         
         # excitation and emission angles
@@ -63,8 +64,18 @@ class Polim:
         # excite the sample using linearly polarized light at different angles
         E_absorption = np.dot(E_excitation, self.dip_ori)
         I_absorption = E_absorption ** 2
+        #print ('I')
+        #print (I_absorption)
         # plt.plot(np.linspace(0,np.pi,181),E_absorption)
         # plt.plot(np.linspace(0,np.pi,181),I_absorption)
+        
+        # select dipoles to excite by bl
+        # bl is a logic matrix. It sets the non-excited dipoles (one column in I_absorption) as zeros       
+        I_absorption_bl = np.zeros(np.shape(I_absorption))
+        I_absorption_bl[:,self.bl] = I_absorption[:,self.bl]
+        #print ('I_bl')
+        #print (I_absorption_bl)
+        
         
         # Detect the emission polarization by a polarizor
         E_emission = np.dot(E_polarizer, self.dip_ori)
@@ -73,11 +84,11 @@ class Polim:
         # plt.plot(np.linspace(0,np.pi,181),I_emission)
         
         # change I_absorption and I_emission from array to matrix so that we can have dot product.
-        I_absorption = np.matrix(I_absorption)
+        I_absorption_bl = np.matrix(I_absorption_bl)
         I_emission = np.matrix(I_emission) 
         
         # I_ex_em = I_ex * et_matrix * I_em.T
-        I_absorption_after_et = np.dot(I_absorption, self.et_matrix) 
+        I_absorption_after_et = np.dot(I_absorption_bl, self.et_matrix) 
         self.I_ex_em = np.dot(I_absorption_after_et, I_emission.T)
         self.I_ex_em = self.I_ex_em.T
         
@@ -117,8 +128,8 @@ class Polim:
         plt.ylabel('em')
         plt.gca().invert_yaxis()
         plt.draw()
-        # theta_str = str(self.theta).strip('[]')
-        # title_str = 'dipoles orientation =' + theta_str + ' (in degree) '
+        theta_str = str(self.theta).strip('[]')
+        title_str = 'dipoles orientation =' + theta_str + ' (in degree) '
         # plt.title(title_str, fontsize = 14)
         plt.colorbar()
 
@@ -150,9 +161,13 @@ class Polim:
         a0 = [M_ex, phase_ex, 1.0, .5]
 
         # boundry
-        LB = [0.001,    phase_ex - np.pi/2, 0.0000, 0.0000]
-        UB = [0.999999, phase_ex + np.pi/2, 2 * (1 + M_ex)/(1 - M_ex)*.999, 1.000]
-
+        LB = [0.0001,    phase_ex - np.pi/2, 0.0000, 0.0000]
+        # UB = [0.999999, phase_ex + np.pi/2, 2 * (1 + M_ex)/(1 - M_ex)*.999, 1.000]
+        UB = [0.9999, phase_ex + np.pi/2, 2 * (1 + 0.9999*M_ex)/(1 - 0.9999*M_ex), 1.000]
+        # print (LB)
+        # print (UB)
+        
+        
         # I_ex_em 181*181. select data and put in Ftotnormed 4*6  
         column_index = list(range(0,180,30)) # coordinate - angels - intensity. 6 angles for excitation
         row_index = list(range(0,180,45)) # coordinate - angels - intensity. 4 angles for emission
