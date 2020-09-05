@@ -14,19 +14,16 @@ from Polim import Polim
 
 plt.rcParams.update({'font.size': 12})
 
-# Hello git
-
-
 # because we generate dipole randomly, so the calculation needs to be run for several times. 
 # The resutls can be different and save in funnel_***.
-nReplicates = 50
+nReplicates = 1
 
 # N is the number of systems. in each eystem there are two dipoles oriented at dip1_ori_deg and dip1_ori_deg + angle12
 # N = 1, there are two angles in the theta
-N =  100
+N = 100
 
 # the angle between first dipole and second dipole (in degree)
-angle_12 = 20
+angle_12 = 45.0
 
 # select dipoles to excite by generate a logic matrix. 1 means excite, 0 means not excite.
 bl = np.array([1, 0])
@@ -56,8 +53,10 @@ for r in range(0, nReplicates):
         dip1_ori_deg.append(t1)
 
     # the orientation of the second dipole (= first dipole + angle12)
-    dip2_ori_deg = [dip2_ori_deg + angle_12  for dip2_ori_deg in dip1_ori_deg]
-
+    dip2_ori_deg_pos = [dip2_ori_deg + angle_12  for dip2_ori_deg in dip1_ori_deg[0:N/2]]
+    dip2_ori_deg_neg = [dip2_ori_deg - angle_12  for dip2_ori_deg in dip1_ori_deg[N/2:N]]
+    dip2_ori_deg = np.append(dip2_ori_deg_pos, dip2_ori_deg_neg, axis = 0)
+    
     # print (dip1_ori_deg)
     # print (dip2_ori_deg)
 
@@ -81,7 +80,6 @@ for r in range(0, nReplicates):
         ms_I_ex_em = ms_I_ex_em + P.I_ex_em
         
         
-
     # multiple system
     P_ms = Polim(theta, bl, et_matrix)
     # input 2D portrait of multiple system (ms) to instance P_ms
@@ -98,54 +96,55 @@ for r in range(0, nReplicates):
     funnel_et[r] = P_ms.fitresult[0][3]
     funnel_resi[r] = P_ms.fitresult[1]
     
-    if nReplicates == 1:
-        P_ms.plot_2D_portrait()
+    if nReplicates == 1:       
         P_ms.plot_SFA3()
         P_ms.reconstruct_Ftot_Fet_Fnoet()
+        P_ms.plot_2D_portrait()
         
 
-# plt.close('all')
-# plot statistic results
-plt.figure(figsize=(16, 9))
-plt.subplots_adjust(hspace = 0.4)
+if nReplicates != 1:
+    # plt.close('all')
+    # plot statistic results
+    plt.figure(figsize=(16, 9))
+    plt.subplots_adjust(hspace = 0.4)
 
-plt.subplot(231)
-plt.scatter(funnel_et, funnel_M)
-plt.xlabel('et')
-plt.ylabel('M')
-plt.xlim([-0.2, 1.2])
-plt.ylim([-0.2, 1.2])
+    plt.subplot(231)
+    plt.scatter(funnel_et, funnel_M)
+    plt.xlabel('et')
+    plt.ylabel('M')
+    plt.xlim([-0.2, 1.2])
+    plt.ylim([-0.2, 1.2])
 
-plt.subplot(232)
-plt.scatter(funnel_et, funnel_resi)
-plt.xlabel('et')
-plt.ylabel('residue')
-plt.xlim([-0.2, 1.2])
-plt.ylim([0.0, 0.1])
+    plt.subplot(232)
+    plt.scatter(funnel_et, funnel_resi)
+    plt.xlabel('et')
+    plt.ylabel('residue')
+    plt.xlim([-0.2, 1.2])
+    plt.ylim([0.0, 0.1])
 
-plt.subplot(233)
-plt.scatter(funnel_phase * 180/np.pi, funnel_M)
-plt.xlabel('phase')
-plt.ylabel('M')
-plt.xlim([-2, 182])
-plt.ylim([-0.2, 1.2])
+    plt.subplot(233)
+    plt.scatter(funnel_phase * 180/np.pi, funnel_M)
+    plt.xlabel('phase')
+    plt.ylabel('M')
+    plt.xlim([-2, 182])
+    plt.ylim([-0.2, 1.2])
 
-plt.subplot(245)
-plt.hist(funnel_M, bins = 20, range = (-0.2,1.2))
-plt.title('averaged_funnel_M \n %f ' % (np.mean(funnel_M)))
-plt.xlim([-0.2, 1.2])
+    plt.subplot(245)
+    plt.hist(funnel_M, bins = 20, range = (-0.2,1.2))
+    plt.title('averaged_funnel_M \n %f ' % (np.mean(funnel_M)))
+    plt.xlim([-0.2, 1.2])
 
-plt.subplot(246)
-plt.hist(funnel_phase * 180/np.pi , bins = 180, range = (-2,182))
-plt.title('funnel_phase')
+    plt.subplot(246)
+    plt.hist(funnel_phase * 180/np.pi , bins = 180, range = (-2,182))
+    plt.title('funnel_phase')
 
-plt.subplot(247)
-plt.hist(funnel_et, bins = 20, range = (-0.2,1.2))
-plt.title('averaged_funnel_et \n %f' % (np.mean(funnel_et)) )
+    plt.subplot(247)
+    plt.hist(funnel_et, bins = 20, range = (-0.2,1.2))
+    plt.title('averaged_funnel_et \n %f' % (np.mean(funnel_et)) )
 
-plt.subplot(248)
-plt.hist(funnel_resi)
-plt.title('averaged_funnel_resi \n %f' % (np.mean(funnel_resi)))
+    plt.subplot(248)
+    plt.hist(funnel_resi)
+    plt.title('averaged_funnel_resi \n %f' % (np.mean(funnel_resi)))
 
 
 

@@ -11,6 +11,8 @@ import addcopyfighandler
 
 plt.rcParams.update({'font.size': 15})
 
+plt.close('all')
+
 phi = np.linspace(0, 2*np.pi, 50)
 epsilon = np.linspace(0, 1, 11)
 

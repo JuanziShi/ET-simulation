@@ -42,6 +42,8 @@ class Polim:
         self.Fetfine_output = None
         self.Fnoetfine_output = None
         
+        # limit of colorbar for all 2D portrait
+        self.vmax = None
         
         return
    
@@ -131,6 +133,7 @@ class Polim:
         theta_str = str(self.theta).strip('[]')
         title_str = 'dipoles orientation =' + theta_str + ' (in degree) '
         # plt.title(title_str, fontsize = 14)
+        plt.clim(0, self.vmax)    
         plt.colorbar()
 
         ax2 = plt.subplot(122)
@@ -163,7 +166,7 @@ class Polim:
         # boundry
         LB = [0.0001,    phase_ex - np.pi/2, 0.0000, 0.0000]
         # UB = [0.999999, phase_ex + np.pi/2, 2 * (1 + M_ex)/(1 - M_ex)*.999, 1.000]
-        UB = [0.9999, phase_ex + np.pi/2, 2 * (1 + 0.9999*M_ex)/(1 - 0.9999*M_ex), 1.000]
+        UB = [0.1, phase_ex + np.pi/2, 2 * (1 + 0.9999*M_ex)/(1 - 0.9999*M_ex), 1.000]
         # print (LB)
         # print (UB)
         
@@ -251,7 +254,7 @@ class Polim:
         
         plt.legend(['Fet', 'Fnoet', 'model', 'Ftot'])
         th_fu_deg = th_fu*180/np.pi
-        plt.suptitle( 'md_fu=%f th_fu=%f gr=%f et=%f resi=%f' % (md_fu, th_fu, gr, et, resi))
+        plt.suptitle( 'md_fu=%f th_fu_deg=%f gr=%f et=%f resi=%f' % (md_fu, th_fu_deg, gr, et, resi))
     
                 
         return
@@ -290,9 +293,19 @@ class Polim:
     
         # note: np.sum(modelfine) = 1, np.sum(Fetfine) = 1, np.sum(Fnoetfine) = 1
         
+        # the limit of colorbar for all 2D portrait
+        vmax_I_ex_em = np.max(self.I_ex_em)
+        vmax_model = np.max(np.sum(self.I_ex_em) * modelfine)
+        vmax_Fet = np.max(np.sum(self.I_ex_em) * Fetfine)
+        vmax_Fnoet = np.max(np.sum(self.I_ex_em) * Fnoetfine)
+        vmax = np.max(np.array([vmax_I_ex_em, vmax_model, vmax_Fet, vmax_Fnoet]))
+        self.vmax = vmax
+        
         fig, (ax1, ax2, ax3) = plt.subplots(figsize = (17, 4), ncols = 3)
         
         h_model = ax1.imshow(np.sum(self.I_ex_em) * modelfine)
+        #h_model.set_clim(0, np.max(np.sum(self.I_ex_em) * modelfine))
+        h_model.set_clim(0, vmax)        
         ax1.invert_yaxis()       
         ax1.set_title('model')       
         divider1 = make_axes_locatable(ax1)
@@ -300,6 +313,8 @@ class Polim:
         fig.colorbar(h_model, cax = cax1, ax = ax1)
                 
         h_Fet = ax2.imshow(np.sum(self.I_ex_em) * Fetfine)
+        # h_Fet.set_clim(0, np.max(np.sum(self.I_ex_em) * Fetfine))
+        h_Fet.set_clim(0, vmax)    
         ax2.invert_yaxis()       
         ax2.set_title('Fet')       
         divider2 = make_axes_locatable(ax2)
@@ -307,6 +322,8 @@ class Polim:
         fig.colorbar(h_Fet, cax = cax2, ax = ax2)
         
         h_Fnoet = ax3.imshow(np.sum(self.I_ex_em) * Fnoetfine)
+        # h_Fnoet.set_clim(0, np.max(np.sum(self.I_ex_em) * Fnoetfine))
+        h_Fnoet.set_clim(0, vmax)    
         ax3.invert_yaxis()       
         ax3.set_title('Fnoet')       
         divider3 = make_axes_locatable(ax3)

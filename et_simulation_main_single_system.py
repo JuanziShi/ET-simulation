@@ -19,16 +19,16 @@ plt.rcParams.update({'font.size': 12})
 
 # small number of dipolse (mainly for checking)
 # set dipole orientation
-theta = np.array([0, 30])
+theta = np.array([0, 20])
 
 # select dipoles to excite by generate a logic matrix. 1 means excite, 0 means not excite.
-bl = np.array([1, 0])
+bl = np.array([1, 1])
 bl = (bl == 1)
 assert np.size(bl) == np.size(theta), 'bl array is wrong'
 
 
 # set steady state ET matrix
-et_matrix = np.matrix([[0.0, 1.0],
+et_matrix = np.matrix([[1.0, 0.0],
                        [0.0, 1.0],
                        ])
 assert np.sum(et_matrix) == np.size(theta), 'et_matrix is wrong'                
