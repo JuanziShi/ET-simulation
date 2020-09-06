@@ -16,14 +16,15 @@ plt.rcParams.update({'font.size': 12})
 
 # because we generate dipole randomly, so the calculation needs to be run for several times. 
 # The resutls can be different and save in funnel_***.
-nReplicates = 1
+nReplicates = 50
+
 
 # N is the number of systems. in each eystem there are two dipoles oriented at dip1_ori_deg and dip1_ori_deg + angle12
 # N = 1, there are two angles in the theta
-N = 100
+N = 20
 
 # the angle between first dipole and second dipole (in degree)
-angle_12 = 45.0
+angle_12 = 20.0
 
 # select dipoles to excite by generate a logic matrix. 1 means excite, 0 means not excite.
 bl = np.array([1, 0])

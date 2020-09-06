@@ -166,7 +166,7 @@ class Polim:
         # boundry
         LB = [0.0001,    phase_ex - np.pi/2, 0.0000, 0.0000]
         # UB = [0.999999, phase_ex + np.pi/2, 2 * (1 + M_ex)/(1 - M_ex)*.999, 1.000]
-        UB = [0.1, phase_ex + np.pi/2, 2 * (1 + 0.9999*M_ex)/(1 - 0.9999*M_ex), 1.000]
+        UB = [0.9999, phase_ex + np.pi/2, 2 * (1 + 0.9999*M_ex)/(1 - 0.9999*M_ex), 1.000]
         # print (LB)
         # print (UB)
         
