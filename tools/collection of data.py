@@ -10,6 +10,14 @@ Created on Sun Sep 06 10:34:59 2020
 import numpy as np
 import matplotlib.pyplot as plt
 
+test = np.array([[1, 0, 0], [0, 2, 0], [0, 0, 3]])
+
+test_sub = np.diag(test)
+print (test_sub)
+
+
+
+
 
 # 3. plot epsilon - N  for different anglesv(angle12)
 # nReplicates = 50

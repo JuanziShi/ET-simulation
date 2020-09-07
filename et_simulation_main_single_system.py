@@ -19,18 +19,19 @@ plt.rcParams.update({'font.size': 12})
 
 # small number of dipolse (mainly for checking)
 # set dipole orientation
-theta = np.array([0, 20])
+theta = np.array([0, 45, 90, 135])
 
 # select dipoles to excite by generate a logic matrix. 1 means excite, 0 means not excite.
-bl = np.array([1, 1])
+bl = np.array([1, 1, 1, 1])
 bl = (bl == 1)
 assert np.size(bl) == np.size(theta), 'bl array is wrong'
 
 
 # set steady state ET matrix
-et_matrix = np.matrix([[1.0, 0.0],
-                       [0.0, 1.0],
-                       ])
+et_matrix = np.matrix([[0.5, 0.5, 0.0, 0.0],
+                       [0.5, 0.5, 0.0, 0.0],
+                       [0.5, 0.5, 0.0, 0.0],
+                       [0.5, 0.5, 0.0, 0.0]])
 assert np.sum(et_matrix) == np.size(theta), 'et_matrix is wrong'                
 
 
@@ -81,21 +82,13 @@ P.quick_check_funnel_and_dipoles()
 
 
 
-
-
-# test= np.array([[0,   1,   2,   3],
-#                [5,   15,   20,   32],
-#                [10,  11,   21,   13]])
-
-# bl = np.array([1, 0, 1, 1])
-# bl = (bl == 1)
-
-# test_c = np.zeros(np.shape(test))
-# test_c[:,bl] = test[:,bl]
-
-# print (test_c)
-
-
+# plot the diagonal of the raw 2D portrait
+x = np.linspace(0, 180, 181)
+raw_portrait_diag = np.diag(P.I_ex_em)
+plt.figure()
+plt.plot(x, raw_portrait_diag)
+plt.ylim(0.0, np.max(raw_portrait_diag) + 0.5)
+np.savetxt('raw_portrait_diag4.dat', raw_portrait_diag)
 
 
 
