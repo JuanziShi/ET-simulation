@@ -33,6 +33,9 @@ class Polim:
         self.portrait = None
         self.I_ex_em = None
         
+        # compute anisotropy for solution
+        self.r0 = None
+        
         # fit by SFA3 and plot residue
         self.fitresult = None
         self.Ftot = None
@@ -117,27 +120,36 @@ class Polim:
         
         return
     
-    def compute_anisotropy(self):
+    def compute_anisotropy_for_solution(self):
+        '''
+        Calculate the anisotropy of solution. It only works for large amout of systems where all values are on the diagonal.
+        The anisotropy is the same for all the excitation angles. So it does not matter which excitation angle is choosed. 
+        '''
         
-        I_r0 = np.flip(P.I_ex_em, axis = 0)
-        phase_ex = np.argmax(np.sum(I_r0, axis = 0 ))
-        Ipara = I_r0[phase_ex, phase_ex] 
-        Iperp = I_r0[]
+        I_r0 = np.flip(self.I_ex_em, axis = 0)
         
-        for sii, si in enumerate(myspots):
-            # value at parallel configuration:
-            Ipara = mycos(self.validspots[si].phase_ex, fp[sii], fi[sii], fm[sii])
-            # value at perpendicular configuration:
-            Iperp = mycos(self.validspots[si].phase_ex - np.pi / 2, fp[sii], fi[sii], fm[sii])
+        # choose ex at 120 degree
+        ex_angle = 120
+        Ipara = I_r0[(180 - ex_angle), ex_angle] 
+        Iperp = I_r0[(180 - ex_angle) + 90, ex_angle]
 
-            if not float(Ipara + 2 * Iperp) == 0:
-                self.validspots[si].anisotropy = float(Ipara - Iperp) / float(Ipara + 2 * Iperp)
-            else:
-                self.validspots[si].anisotropy = np.nan
-        
-        
-
+        if not float(Ipara + 2 * Iperp) == 0:
+            self.r0 = float(Ipara - Iperp) / float(Ipara + 2 * Iperp)
+        else:
+            self.r0 = np.nan          
     
+        
+#        if (180 - phase_ex) - 90 >= 0:
+#            Iperp = I_r0[(180 - phase_ex) - 90, phase_ex]
+#        else: 
+#            Iperp = I_r0[(180 - phase_ex) + 90, phase_ex]
+#        
+#        if not float(Ipara + 2 * Iperp) == 0:
+#            r0 = float(Ipara - Iperp) / float(Ipara + 2 * Iperp)
+#        else:
+#            r0 = np.nan      
+            
+     
     def plot_2D_portrait(self):
     
         # plot 2D portrait and ex em curve
@@ -149,8 +161,8 @@ class Polim:
         plt.ylabel('em')
         plt.gca().invert_yaxis()
         plt.draw()
-        theta_str = str(self.theta).strip('[]')
-        title_str = 'dipoles orientation =' + theta_str + ' (in degree) '
+        # theta_str = str(self.theta).strip('[]')
+        # title_str = 'dipoles orientation =' + theta_str + ' (in degree) '
         # plt.title(title_str, fontsize = 14)
         plt.clim(0, self.vmax)    
         plt.colorbar()

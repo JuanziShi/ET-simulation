@@ -97,6 +97,7 @@ for N in N_system:
         # fit by SFA3
         P_ms.compute_M_phase_from_original_2D_portrait()
         P_ms.compute_SFA3()
+        P_ms.compute_anisotropy_for_solution()
     
         # store the data
         funnel_M[r][n_column] = P_ms.fitresult[0][0]

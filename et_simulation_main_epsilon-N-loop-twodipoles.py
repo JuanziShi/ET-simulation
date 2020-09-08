@@ -16,10 +16,10 @@ plt.rcParams.update({'font.size': 12})
 
 # because we generate dipole randomly, so the calculation needs to be run for several times. 
 # The resutls can be different and save in funnel_***.
-nReplicates = 50
+nReplicates = 1
 
 # the angle between first dipole and second dipole (in degree)
-angle_12 = 40.0
+angle_12 = 80.0
 
 # select dipoles to excite by generate a logic matrix. 1 means excite, 0 means not excite.
 bl = np.array([1, 0])
@@ -31,7 +31,7 @@ et_matrix = np.matrix([[0.0, 1.0],
                        [0.0, 1.0]])
 assert np.sum(et_matrix) == 2 , 'et_matrix is wrong'
 
-N_system = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 50, 100])
+N_system = np.array([1000])
 #N_system = np.array([1, 2, 3, 4, 5])
 
 # store the fitting results in following column arrays
@@ -93,20 +93,29 @@ for N in N_system:
         # fit by SFA3
         P_ms.compute_M_phase_from_original_2D_portrait()
         P_ms.compute_SFA3()
-    
+        P_ms.compute_anisotropy_for_solution()
+        
         # store the data
         funnel_M[r][n_column] = P_ms.fitresult[0][0]
         funnel_phase[r][n_column] = P_ms.fitresult[0][1]
         funnel_et[r][n_column] = P_ms.fitresult[0][3]
         funnel_resi[r][n_column] = P_ms.fitresult[1]
+        
+        if nReplicates == 1 and np.size(N_system) == 1:  
+            plt.close('all')
+            P_ms.plot_SFA3()
+            P_ms.reconstruct_Ftot_Fet_Fnoet()
+            P_ms.plot_2D_portrait()
     
     n_column = n_column + 1
+
           
 plt.figure()
 plt.plot(N_system, np.mean(funnel_et, axis = 0), 'ro-')
 plt.plot(N_system, np.mean(funnel_M, axis = 0), 'ko-')
 plt.plot(N_system, np.mean(funnel_resi, axis = 0), 'yo-')
-
+plt.xlabel('N (number of systems)')
+plt.ylabel('et & M & resi')
 
 # %%
 # save data in to .dat
@@ -161,12 +170,6 @@ plt.legend(['0'+ u"\N{DEGREE SIGN}", '10'+ u"\N{DEGREE SIGN}", '20'+ u"\N{DEGREE
 
 
 
-    
-    
-    
-    
-    
-    
 # %%
 if nReplicates != 1:
     # plt.close('all')
