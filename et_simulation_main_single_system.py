@@ -19,19 +19,17 @@ plt.rcParams.update({'font.size': 12})
 
 # small number of dipolse (mainly for checking)
 # set dipole orientation
-theta = np.array([0, 45, 90, 135])
+theta = np.array([120])
 
 # select dipoles to excite by generate a logic matrix. 1 means excite, 0 means not excite.
-bl = np.array([1, 1, 1, 1])
+bl = np.array([1])
 bl = (bl == 1)
 assert np.size(bl) == np.size(theta), 'bl array is wrong'
 
 
 # set steady state ET matrix
-et_matrix = np.matrix([[0.5, 0.5, 0.0, 0.0],
-                       [0.5, 0.5, 0.0, 0.0],
-                       [0.5, 0.5, 0.0, 0.0],
-                       [0.5, 0.5, 0.0, 0.0]])
+et_matrix = np.matrix([[1.0]
+                            ])
 assert np.sum(et_matrix) == np.size(theta), 'et_matrix is wrong'                
 
 
@@ -60,7 +58,7 @@ assert np.sum(et_matrix) == np.size(theta), 'et_matrix is wrong'
 #et_matrix = np.flip(np.eye(et_matrix_size, dtype = int), 1)
 
 
-plt.close('all')
+# plt.close('all')
 # create instance P by class Polim
 P = Polim(theta, bl, et_matrix)
 
@@ -72,15 +70,16 @@ P.plot_2D_portrait()
 
 #  fit by SFA+3 model and plot the results
 P.compute_SFA3()
-P.plot_SFA3()
+# P.plot_SFA3()
 
 # reconstruct et and noet 2D portrait  
-P.reconstruct_Ftot_Fet_Fnoet()
+# P.reconstruct_Ftot_Fet_Fnoet()
 
 # compare the funnel with dipoles
-P.quick_check_funnel_and_dipoles()
+# P.quick_check_funnel_and_dipoles()
 
 
+# %% try to extrat the number of dipoles from 2D portrait
 
 # plot the diagonal of the raw 2D portrait
 x = np.linspace(0, 180, 181)
@@ -90,6 +89,24 @@ plt.plot(x, raw_portrait_diag)
 plt.ylim(0.0, np.max(raw_portrait_diag) + 0.5)
 np.savetxt('raw_portrait_diag4.dat', raw_portrait_diag)
 
+
+# FFT of image
+im = P.I_ex_em
+im = np.flip(im, axis = 0)
+
+# FFT
+f = np.fft.fft2(im)
+# concentrate all high frequency on the center
+fshift = np.fft.fftshift(f)
+
+magnitude_spectrum = 20 * np.log(np.abs(fshift))
+magnitude_spectrum = np.asarray(magnitude_spectrum, dtype = np.uint16)
+
+im_and_magnitude = np.concatenate((im/np.max(im)*256, magnitude_spectrum), axis = 1)
+
+plt.figure()
+plt.imshow(im_and_magnitude)
+plt.axis('off')
 
 
 

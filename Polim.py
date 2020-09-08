@@ -117,7 +117,26 @@ class Polim:
         
         return
     
+    def compute_anisotropy(self):
         
+        I_r0 = np.flip(P.I_ex_em, axis = 0)
+        phase_ex = np.argmax(np.sum(I_r0, axis = 0 ))
+        Ipara = I_r0[phase_ex, phase_ex] 
+        Iperp = I_r0[]
+        
+        for sii, si in enumerate(myspots):
+            # value at parallel configuration:
+            Ipara = mycos(self.validspots[si].phase_ex, fp[sii], fi[sii], fm[sii])
+            # value at perpendicular configuration:
+            Iperp = mycos(self.validspots[si].phase_ex - np.pi / 2, fp[sii], fi[sii], fm[sii])
+
+            if not float(Ipara + 2 * Iperp) == 0:
+                self.validspots[si].anisotropy = float(Ipara - Iperp) / float(Ipara + 2 * Iperp)
+            else:
+                self.validspots[si].anisotropy = np.nan
+        
+        
+
     
     def plot_2D_portrait(self):
     

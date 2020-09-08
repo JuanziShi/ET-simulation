@@ -19,7 +19,7 @@ plt.rcParams.update({'font.size': 12})
 nReplicates = 50
 
 # the angle between first dipole and second dipole (in degree)
-angle_12 = 130.0
+angle_12 = 40.0
 
 # select dipoles to excite by generate a logic matrix. 1 means excite, 0 means not excite.
 bl = np.array([1, 0])
@@ -101,14 +101,14 @@ for N in N_system:
         funnel_resi[r][n_column] = P_ms.fitresult[1]
     
     n_column = n_column + 1
-    
+          
+plt.figure()
+plt.plot(N_system, np.mean(funnel_et, axis = 0), 'ro-')
+plt.plot(N_system, np.mean(funnel_M, axis = 0), 'ko-')
+plt.plot(N_system, np.mean(funnel_resi, axis = 0), 'yo-')
 
-        
-#plt.figure()
-#plt.plot(N_system, np.mean(funnel_et, axis = 0), 'ro-')
-#plt.plot(N_system, np.mean(funnel_M, axis = 0), 'ko-')
-#plt.plot(N_system, np.mean(funnel_resi, axis = 0), 'yo-')
 
+# %%
 # save data in to .dat
 data_save = np.vstack( (N_system, \
                         np.mean(funnel_M, axis = 0), \
@@ -118,82 +118,101 @@ data_save = np.vstack( (N_system, \
                                           
 np.savetxt('beta130-nReplicates50.dat', data_save)
 
+# %%
+# two dipoles - read data and plot 
 
-# read data and plot
-path = 'C:/Users/sjz/Desktop/ET-simulation-master/ET-simulation/results/plot N-epsilon for different angles (beta)/'
+# read the data
+path = 'C:/Users/sjz/Desktop/ET-simulation-master/ET-simulation/results/plot N-epsilon for different angles (2 dipoles)/'
 data0 = np.loadtxt(path+'beta0-nReplicates50.dat')
 data10 = np.loadtxt(path+'beta10-nReplicates50.dat')
 data20 = np.loadtxt(path+'beta20-nReplicates50.dat')
 data30 = np.loadtxt(path+'beta30-nReplicates50.dat')
-data40 = np.loadtxt(path+'beta40-nReplicates50.dat')
 data60 = np.loadtxt(path+'beta60-nReplicates50.dat')
 data90 = np.loadtxt(path+'beta90-nReplicates50.dat')
 
+# plot raw data
 plt.figure()
 plt.plot(data0[0,:], data0[2,:], 'o-')
 plt.plot(data10[0,:], data10[2,:], 'o-')
 plt.plot(data20[0,:], data20[2,:], 'o-')
 plt.plot(data30[0,:], data30[2,:], 'o-')
-plt.plot(data40[0,:], data40[2,:], 'o-')
 plt.plot(data60[0,:], data60[2,:], 'o-')
 plt.plot(data90[0,:], data90[2,:], 'o-')
 
 plt.xlabel('N (number of systems)')
 plt.ylabel('funnel et')
 plt.legend(['0'+ u"\N{DEGREE SIGN}", '10'+ u"\N{DEGREE SIGN}", '20'+ u"\N{DEGREE SIGN}", '30'+ u"\N{DEGREE SIGN}", \
-            '40'+ u"\N{DEGREE SIGN}", '60'+ u"\N{DEGREE SIGN}", '90'+ u"\N{DEGREE SIGN}"])
+            '60'+ u"\N{DEGREE SIGN}", '90'+ u"\N{DEGREE SIGN}"])
+
+    
+# plot normalized data
+plt.figure()
+plt.plot(data0[0,0:11], data0[2,0:11], 'o-')
+plt.plot(data10[0,0:11], (data10[2,0:11]-data10[2, 11])/(data10[2,0]-data10[2, 11]), 'o-')
+plt.plot(data20[0,0:11], (data20[2,0:11]-data20[2, 11])/(data20[2,0]-data20[2, 11]), 'o-')
+plt.plot(data30[0,0:11], (data30[2,0:11]-data30[2, 11])/(data30[2,0]-data30[2, 11]), 'o-')
+plt.plot(data60[0,0:11], data60[2,0:11], 'o-')
+plt.plot(data90[0,0:11], data90[2,0:11], 'o-')
+
+plt.xlabel('N (number of systems)')
+plt.ylabel('funnel et')
+plt.legend(['0'+ u"\N{DEGREE SIGN}", '10'+ u"\N{DEGREE SIGN}", '20'+ u"\N{DEGREE SIGN}", '30'+ u"\N{DEGREE SIGN}", \
+            '60'+ u"\N{DEGREE SIGN}", '90'+ u"\N{DEGREE SIGN}"])
 
 
 
-#if nReplicates != 1:
-#    # plt.close('all')
-#    # plot statistic results
-#    plt.figure(figsize=(16, 9))
-#    plt.subplots_adjust(hspace = 0.4)
-#
-#    plt.subplot(231)
-#    plt.scatter(funnel_et, funnel_M)
-#    plt.xlabel('et')
-#    plt.ylabel('M')
-#    plt.xlim([-0.2, 1.2])
-#    plt.ylim([-0.2, 1.2])
-#
-#    plt.subplot(232)
-#    plt.scatter(funnel_et, funnel_resi)
-#    plt.xlabel('et')
-#    plt.ylabel('residue')
-#    plt.xlim([-0.2, 1.2])
-#    plt.ylim([0.0, 0.1])
-#
-#    plt.subplot(233)
-#    plt.scatter(funnel_phase * 180/np.pi, funnel_M)
-#    plt.xlabel('phase')
-#    plt.ylabel('M')
-#    plt.xlim([-2, 182])
-#    plt.ylim([-0.2, 1.2])
-#
-#    plt.subplot(245)
-#    plt.hist(funnel_M, bins = 20, range = (-0.2,1.2))
-#    plt.title('averaged_funnel_M \n %f ' % (np.mean(funnel_M)))
-#    plt.xlim([-0.2, 1.2])
-#
-#    plt.subplot(246)
-#    plt.hist(funnel_phase * 180/np.pi , bins = 180, range = (-2,182))
-#    plt.title('funnel_phase')
-#
-#    plt.subplot(247)
-#    plt.hist(funnel_et, bins = 20, range = (-0.2,1.2))
-#    plt.title('averaged_funnel_et \n %f' % (np.mean(funnel_et)) )
-#
-#    plt.subplot(248)
-#    plt.hist(funnel_resi)
-#    plt.title('averaged_funnel_resi \n %f' % (np.mean(funnel_resi)))
-#
+    
+    
+    
+    
+    
+    
+# %%
+if nReplicates != 1:
+    # plt.close('all')
+    # plot statistic results
+    plt.figure(figsize=(16, 9))
+    plt.subplots_adjust(hspace = 0.4)
 
+    plt.subplot(231)
+    plt.scatter(funnel_et, funnel_M)
+    plt.xlabel('et')
+    plt.ylabel('M')
+    plt.xlim([-0.2, 1.2])
+    plt.ylim([-0.2, 1.2])
 
+    plt.subplot(232)
+    plt.scatter(funnel_et, funnel_resi)
+    plt.xlabel('et')
+    plt.ylabel('residue')
+    plt.xlim([-0.2, 1.2])
+    plt.ylim([0.0, 0.1])
 
+    plt.subplot(233)
+    plt.scatter(funnel_phase * 180/np.pi, funnel_M)
+    plt.xlabel('phase')
+    plt.ylabel('M')
+    plt.xlim([-2, 182])
+    plt.ylim([-0.2, 1.2])
 
+    plt.subplot(245)
+    plt.hist(funnel_M, bins = 20, range = (-0.2,1.2))
+    plt.title('averaged_funnel_M \n %f ' % (np.mean(funnel_M)))
+    plt.xlim([-0.2, 1.2])
 
+    plt.subplot(246)
+    plt.hist(funnel_phase * 180/np.pi , bins = 180, range = (-2,182))
+    plt.title('funnel_phase')
+
+    plt.subplot(247)
+    plt.hist(funnel_et, bins = 20, range = (-0.2,1.2))
+    plt.title('averaged_funnel_et \n %f' % (np.mean(funnel_et)) )
+
+    plt.subplot(248)
+    plt.hist(funnel_resi)
+    plt.title('averaged_funnel_resi \n %f' % (np.mean(funnel_resi)))
+
+# %%
 # # nreplicates = 50
 # # angle_12 = 30 
 # # et_matrix = np.matrix([[0.0, 1.0],
