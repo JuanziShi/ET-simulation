@@ -19,7 +19,7 @@ plt.rcParams.update({'font.size': 12})
 nReplicates = 1
 
 # the angle between first dipole and second dipole (in degree)
-angle_12 = 80.0
+angle_12 = 0.0
 
 # select dipoles to excite by generate a logic matrix. 1 means excite, 0 means not excite.
 bl = np.array([1, 0])
@@ -39,6 +39,7 @@ funnel_M = np.zeros((nReplicates, np.size(N_system)))
 funnel_phase = np.zeros((nReplicates, np.size(N_system)))
 funnel_et = np.zeros((nReplicates, np.size(N_system)))
 funnel_resi = np.zeros((nReplicates, np.size(N_system)))
+portrait_r0 = np.zeros((nReplicates, np.size(N_system)))
 
 
 # N is the number of systems. in each eystem there are two dipoles oriented at dip1_ori_deg and dip1_ori_deg + angle12
@@ -100,6 +101,8 @@ for N in N_system:
         funnel_phase[r][n_column] = P_ms.fitresult[0][1]
         funnel_et[r][n_column] = P_ms.fitresult[0][3]
         funnel_resi[r][n_column] = P_ms.fitresult[1]
+        portrait_r0[r][n_column] = P_ms.r0
+
         
         if nReplicates == 1 and np.size(N_system) == 1:  
             plt.close('all')
@@ -114,8 +117,12 @@ plt.figure()
 plt.plot(N_system, np.mean(funnel_et, axis = 0), 'ro-')
 plt.plot(N_system, np.mean(funnel_M, axis = 0), 'ko-')
 plt.plot(N_system, np.mean(funnel_resi, axis = 0), 'yo-')
+plt.plot(N_system, np.mean(portrait_r0, axis = 0), 'bo-')
 plt.xlabel('N (number of systems)')
-plt.ylabel('et & M & resi')
+plt.ylabel('et & M & resi & r0')
+
+print ('r0 = % 0.3f' %(portrait_r0))
+print ('et = % 0.3f' %(funnel_et) )
 
 # %%
 # save data in to .dat
@@ -215,27 +222,7 @@ if nReplicates != 1:
     plt.hist(funnel_resi)
     plt.title('averaged_funnel_resi \n %f' % (np.mean(funnel_resi)))
 
-# %%
-# # nreplicates = 50
-# # angle_12 = 30 
-# # et_matrix = np.matrix([[0.0, 1.0],
-# #                       [0.0, 1.0]])
-# x = np.array([1, 2, 4, 8, 16, 32, 64, 128])
-# y_et = np.array([1.000, 0.546, 0.366, 0.286, 0.265, 0.255, 0.253, 0.252])
-# y_M = np.array([0.999, 0.878, 0.815, 0.647, 0.567, 0.359, 0.261, 0.194])
 
-# plt.figure(figsize = (17, 4))
-# plt.subplot(121)
-# plt.plot(x, y_et, 'ko-')
-# plt.ylim([0, 1.2])
-# plt.xlabel('N (number of systems)')
-# plt.ylabel('funnel et')
-
-# plt.subplot(122)
-# plt.plot(x, y_M, 'ko-')
-# plt.ylim([0, 1.2])
-# plt.xlabel('N (number of systems)')
-# plt.ylabel('funnel M')
     
 
     

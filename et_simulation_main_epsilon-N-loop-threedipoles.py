@@ -17,7 +17,7 @@ plt.rcParams.update({'font.size': 12})
 # Three dipoles
 # because we generate dipole randomly, so the calculation needs to be run for several times. 
 # The resutls can be different and save in funnel_***.
-nReplicates = 50
+nReplicates = 1
 
 # the angle between first dipole and second dipole (in degree)
 angle_12 = 30.0
@@ -34,15 +34,15 @@ et_matrix = np.matrix([[1.0, 0.0, 0.0],
                        [1.0, 0.0, 0.0]])
 assert np.sum(et_matrix) == 3 , 'et_matrix is wrong'
 
-N_system = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 50, 100])
-# N_system = np.array([1])
+# N_system = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 50, 100])
+N_system = np.array([1000])
 
 # store the fitting results in following column arrays
 funnel_M = np.zeros((nReplicates, np.size(N_system)))
 funnel_phase = np.zeros((nReplicates, np.size(N_system)))
 funnel_et = np.zeros((nReplicates, np.size(N_system)))
 funnel_resi = np.zeros((nReplicates, np.size(N_system)))
-
+portrait_r0 = np.zeros((nReplicates, np.size(N_system)))
 
 # N is the number of systems. in each eystem there are two dipoles oriented at dip1_ori_deg and dip1_ori_deg + angle12
 # N = 1, there are two angles in the theta
@@ -104,6 +104,8 @@ for N in N_system:
         funnel_phase[r][n_column] = P_ms.fitresult[0][1]
         funnel_et[r][n_column] = P_ms.fitresult[0][3]
         funnel_resi[r][n_column] = P_ms.fitresult[1]
+        portrait_r0[r][n_column] = P_ms.r0
+        
         
         if nReplicates == 1 and np.size(N_system) == 1:  
             plt.close('all')
@@ -114,12 +116,17 @@ for N in N_system:
     n_column = n_column + 1
     
 
-   
 plt.figure()
 plt.plot(N_system, np.mean(funnel_et, axis = 0), 'ro-')
 plt.plot(N_system, np.mean(funnel_M, axis = 0), 'ko-')
 plt.plot(N_system, np.mean(funnel_resi, axis = 0), 'yo-')
+plt.plot(N_system, np.mean(portrait_r0, axis = 0), 'bo-')
+plt.xlabel('N (number of systems)')
+plt.ylabel('et & M & resi & r0')
 
+print ('r0 = % 0.3f' %(portrait_r0))
+print ('et = % 0.3f' %(funnel_et))
+print ('resi = % 0.3f' %(funnel_resi))
 
 # %% save data in .dat file
 

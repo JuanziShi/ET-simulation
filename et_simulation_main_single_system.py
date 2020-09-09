@@ -19,18 +19,19 @@ plt.rcParams.update({'font.size': 12})
 
 # small number of dipolse (mainly for checking)
 # set dipole orientation
-theta = np.array([0, 60, 120])
+theta = np.array([0, 100, 60, 90])
 
 # select dipoles to excite by generate a logic matrix. 1 means excite, 0 means not excite.
-bl = np.array([1, 1, 1])
+bl = np.array([1, 1, 1, 1])
 bl = (bl == 1)
 assert np.size(bl) == np.size(theta), 'bl array is wrong'
 
 
 # set steady state ET matrix
-et_matrix = np.matrix([[1.0, 0.0, 0.0],
-                       [0.0, 1.0, 0.0],
-                       [0.0, 0.0, 1.0]])
+et_matrix = np.matrix([[1.0, 0.0, 0.0, 0.0],
+                       [0.0, 1.0, 0.0, 0.0],
+                       [0.2, 0.5, 0.3, 0.0],
+                       [0.2, 0.5, 0.0, 0.3]])
 assert np.sum(et_matrix) == np.size(theta), 'et_matrix is wrong'                
 
 
@@ -73,13 +74,13 @@ P.compute_anisotropy_for_solution()
 
 #  fit by SFA+3 model and plot the results
 P.compute_SFA3()
-# P.plot_SFA3()
+P.plot_SFA3()
 
 # reconstruct et and noet 2D portrait  
-# P.reconstruct_Ftot_Fet_Fnoet()
+P.reconstruct_Ftot_Fet_Fnoet()
 
 # compare the funnel with dipoles
-# P.quick_check_funnel_and_dipoles()
+P.quick_check_funnel_and_dipoles()
 
 
 # %% try to extrat the number of dipoles from 2D portrait
