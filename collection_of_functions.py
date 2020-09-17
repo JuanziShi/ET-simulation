@@ -122,13 +122,13 @@ def compute_ex_em_modulation_phase(I_ex_em, theta):
     M_ex = (np.amax(I_ex) - np.amin(I_ex))/(np.amax(I_ex) + np.amin(I_ex))
     if M_ex < 1e-6:
         M_ex = 0.0
-        phase_ex = np.mean(theta) * np.pi / 180
+        phase_ex = 45 * np.pi / 180
     else:
         phase_ex = np.argmax(I_ex) * np.pi / 180
     
     # calculate em modulation depth and phase
     M_em = (np.amax(I_em) - np.amin(I_em))/(np.amax(I_em) + np.amin(I_em))
-    if M_em < 1e-6:
+    if M_em < 1e-3:
         M_em = 0.0
         phase_em = np.mean(theta) * np.pi / 180
     else:
@@ -163,6 +163,7 @@ def SFA_full_func( params, ex_angles, em_angles, md_ex, phase_ex ):
 
     Fet   = .25 * (1+md_ex*np.cos(2*(EX-phase_ex))) * (1+md_fu*np.cos(2*(EM-th_fu)))
     Fet  /= np.sum(Fet)
+    
 
     return et*Fet + (1-et)*Fnoet
 
