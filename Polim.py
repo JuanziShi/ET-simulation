@@ -173,7 +173,7 @@ class Polim:
         ax2.set_ylim([0, 1.2*np.max(np.sum(self.I_ex_em, 1))])
         plt.xlabel('angles')
         plt.ylabel('intensity')
-        
+        plt.legend(['ex','em'])
         return    
     
    

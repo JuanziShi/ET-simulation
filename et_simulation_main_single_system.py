@@ -23,7 +23,7 @@ plt.rcParams.update({'font.size': 12})
 
 # small number of dipolse (mainly for checking)
 # set dipole orientation
-theta = np.array([0, 30, 72, 90])
+theta = np.array([0, 30, 60, 90])
 
 # select dipoles to excite by generate a logic matrix. 1 means excite, 0 means not excite.
 bl = np.array([1, 1, 1, 1])
@@ -34,18 +34,43 @@ assert np.size(bl) == np.size(theta), 'bl array is wrong'
 # set steady state ET matrix
 # set steady state ET matrix 
 # Note! In the paper and Rafael's program, the np.sum(et.matrix,1) = 1 always.
-et_matrix = np.matrix([[1.0, 0.0, 0.0, 0.0],
+et_matrix = np.matrix([[0.4, 0.6, 0.0, 0.0],
                        [0.0, 1.0, 0.0, 0.0],
-                       [0.2, 0.8, 0.0, 0.0],
-                       [0.2, 0.8, 0.0, 0.0]])
+                       [0.0, 0.6, 0.4, 0.0],
+                       [0.0, 0.6, 0.0, 0.4]])
 assert np.sum(et_matrix) == np.size(theta), 'et_matrix is wrong'                
 
+plt.close('all')
+# create instance P by class Polim
+P = Polim(theta, bl, et_matrix)
+
+# compute2D portrait
+P.compute_2D_portrait()
+P.compute_M_phase_from_original_2D_portrait()
+
+# compute anisotropy for large systems (solution)
+P.compute_anisotropy_for_solution()
+
+#  fit by SFA+3 model the results
+P.compute_SFA3()
+
+# reconstruct et and noet 2D portrait  
+P.reconstruct_Ftot_Fet_Fnoet()
+
+# plot original 2D portrait
+P.plot_2D_portrait()
+
+# plot SFA3 fitting results
+P.plot_SFA3()
+
+# compare the funnel with dipoles
+# P.quick_check_funnel_and_dipoles()
 
 # %%
 # large number of dipoles
 
 # set dipole orientation
-theta = np.linspace(0, 180, 1000, endpoint = False)
+theta = np.linspace(90, 180, 1000, endpoint = False)
 # theta = np.array(random.sample(range(0, 180), 100))
 
 # select dipoles to excite by generate a logic matrix. 1 means excite, 0 means not excite.
@@ -65,14 +90,14 @@ assert np.size(bl) == np.size(theta), 'bl array is wrong'
 et_matrix_size = np.size(theta)
 et_matrix = np.matrix([[0.00 for x in range(et_matrix_size)] for y in range(et_matrix_size)] )
 # emitter1 
-et_matrix[:, 0] = 0.4
+et_matrix[:, 999] = 1.0
 # emitter2 
-et_matrix[:,200] = 0.6 
+#et_matrix[:,200] = 0.6 
 
-et_matrix[0, 0] = 1.0
-et_matrix[0, 200] = 0.0
-et_matrix[200, 200] = 1.0
-et_matrix[200, 0] = 0.0
+# et_matrix[0, 0] = 1.0
+# et_matrix[0, 200] = 0.0
+# et_matrix[200, 200] = 1.0
+# et_matrix[200, 0] = 0.0
 
 # emitter3
 #et_matrix[:,400] = 0.3 
@@ -83,7 +108,6 @@ et_matrix[200, 0] = 0.0
 
 assert np.sum(et_matrix) == np.size(theta), 'et_matrix is wrong' 
 
-# %%
 
 plt.close('all')
 # create instance P by class Polim
@@ -140,14 +164,47 @@ plt.figure()
 plt.imshow(im_and_magnitude)
 plt.axis('off')
 
+# r0 - ex
+model = P.modelfine_output
+Fet = P.Fetfine_output
+Fnoet = P.Fnoetfine_output
+
+model_Ipara = model.diagonal() 
+model_Iperp_1 = model[90:181, 0:91].diagonal()
+model_Iperp_2 = model[0:90, 90:180].diagonal() 
+model_Iperp = np.concatenate((model_Iperp_1, model_Iperp_2))
+
+model_r0 = (model_Ipara - model_Iperp) / (model_Ipara + 2 * model_Iperp)
+
+Fet_Ipara = Fet.diagonal() 
+Fet_Iperp_1 = Fet[90:181, 0:91].diagonal()
+Fet_Iperp_2 = Fet[0:90, 90:180].diagonal() 
+Fet_Iperp = np.concatenate((Fet_Iperp_1, Fet_Iperp_2))
+
+Fet_r0 = (Fet_Ipara - Fet_Iperp) / (Fet_Ipara + 2 * Fet_Iperp)
+
+Fnoet_Ipara = Fnoet.diagonal() 
+Fnoet_Iperp_1 = Fnoet[90:181, 0:91].diagonal()
+Fnoet_Iperp_2 = Fnoet[0:90, 90:180].diagonal() 
+Fnoet_Iperp = np.concatenate((Fnoet_Iperp_1, Fnoet_Iperp_2))
+
+Fnoet_r0 = (Fnoet_Ipara - Fnoet_Iperp) / (Fnoet_Ipara + 2 * Fnoet_Iperp)
+
+x = np.linspace(0, 180, 181)
+
+plt.figure()
+plt.plot(x, model_r0)
+plt.plot(x, Fet_r0)
+plt.plot(x, Fnoet_r0)
+
+plt.xlabel('ex angles')
+plt.ylabel('anisotropy')
+plt.legend(['model', 'Fet', 'Fnoet'])
 
 
-
-
-
-
-
-
+plt.figure()
+plt.imshow(model)
+(model[30,30]-model[30+90,30])/(model[30,30]+2*model[30+90,30])
 
 
 

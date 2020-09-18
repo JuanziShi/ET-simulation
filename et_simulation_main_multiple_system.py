@@ -19,8 +19,8 @@ from Polim import Polim
 
 # set dipole orientation
 theta_1 = np.linspace(0, 180, 1000, endpoint = False)
-theta_2 = np.linspace(0, 180, 1000, endpoint = False)
-theta_3 = np.linspace(0, 180, 1000, endpoint = False)
+theta_2 = np.linspace(0, 60, 1000, endpoint = False)
+theta_3 = np.linspace(20, 60, 1000, endpoint = False)
 # theta = np.array(random.sample(range(0, 180), 100))
 
 # select dipoles to excite by generate a logic matrix. 1 means excite, 0 means not excite.
@@ -32,27 +32,41 @@ assert np.size(bl) == np.size(theta_1), 'bl array is wrong'
 # set steady state ET matrix 
 # Note! In the paper and Rafael's program, the np.sum(et.matrix,1) = 1 always.
 
-et_matrix_size = np.size(theta_2)
+et_matrix_size = np.size(theta_1)
 
 # noET
-et_matrix_1 = np.eye(et_matrix_size, dtype = int) 
-assert np.sum(et_matrix_1) == np.size(theta_1), 'et_matrix is wrong' 
+# et_matrix_1 = np.eye(et_matrix_size, dtype = int) 
+# assert np.sum(et_matrix_1) == np.size(theta_1), 'et_matrix is wrong' 
 
 # ET: one or many funnels
-et_matrix_2 = np.eye(et_matrix_size, dtype = int) / 1.25
-et_matrix_2[:,0] = 0.2
-et_matrix_2[0,0] = 1
-assert np.sum(et_matrix_2) == np.size(theta_2), 'et_matrix is wrong' 
+et_matrix_1 = np.matrix([[0.00 for x in range(et_matrix_size)] for y in range(et_matrix_size)] )
+et_matrix_1[:,200] = 1.0 
+assert np.sum(et_matrix_1) == np.size(theta_1), 'et_matrix is wrong' 
+
+et_matrix_2 = np.matrix([[0.00 for x in range(et_matrix_size)] for y in range(et_matrix_size)] )
+et_matrix_2[:,600] = 1.0 
+assert np.sum(et_matrix_1) == np.size(theta_1), 'et_matrix is wrong' 
 
 et_matrix_3 = np.matrix([[0.00 for x in range(et_matrix_size)] for y in range(et_matrix_size)] )
-et_matrix_3[:,200] = 0.8 
-et_matrix_3[:,400] = 0.2
-assert np.sum(et_matrix_3) == np.size(theta_3), 'et_matrix is wrong' 
+et_matrix_3[:,400] = 1.0 
+assert np.sum(et_matrix_1) == np.size(theta_1), 'et_matrix is wrong'
+
+# et_matrix_2 = np.eye(et_matrix_size, dtype = int) / 1.25
+# et_matrix_2[:,600] = 0.2
+# et_matrix_2[600,600] = 1.0
+# assert np.sum(et_matrix_2) == np.size(theta_2), 'et_matrix is wrong' 
+
+# et_matrix_3 = np.eye(et_matrix_size, dtype = int) / 2.5
+# et_matrix_3[:, 400] = 0.6 
+# et_matrix_3[400,400] = 1.0
+# assert np.sum(et_matrix_3) == np.size(theta_3), 'et_matrix is wrong' 
 
 
 
 
 # %%
+plt.close('all')
+
 # # create instance P_1 by class Polim
 P_1 = Polim(theta_1, bl, et_matrix_1)
 P_1.compute_2D_portrait()
@@ -80,11 +94,11 @@ P_3.plot_SFA3()
 P_3.reconstruct_Ftot_Fet_Fnoet()
 P_3.plot_2D_portrait()
 
-#plt.close('all')
 
 # create P_ms by sum I_ex_em from P_1, P_2, P_3 
 P_ms = Polim(theta_1, bl, et_matrix_1)
-ms_I_ex_em = P_1.I_ex_em + P_2.I_ex_em + P_3.I_ex_em
+ms_I_ex_em = (P_1.I_ex_em + P_2.I_ex_em + P_3.I_ex_em)/3
+# ms_I_ex_em = (P_1.I_ex_em + P_2.I_ex_em)/2
 # input 2D portrait of multiple system (ms)
 P_ms.I_ex_em = ms_I_ex_em
 
