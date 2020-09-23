@@ -50,17 +50,36 @@ plt.legend(['funnel et', 'r0'])
 #                       [0.0, 1.0]])
 # N_system = np.array([1000])
 
+# simulation data
 beta = np.linspace(0, 180, 19)
 portrait_r0 = np.array([0.381,	0.352,	0.304,	0.175,	0.078,	-0.048,	-0.168,	-0.235,	-0.262,	-0.276,	-0.272,	-0.226,	-0.151,	-0.071,	0.080,	0.194,	0.265, 0.364, 0.406])
 funnel_et = np.array([0.000,	0.061,	0.234,	0.499,	0.826,	1.000,	1.000,	1.000,	1.000,	1.000,	1.000,	1.000,	1.000,	1.000,	0.827,	0.500,	0.234, 0.06, 0.00])
 
+# theoritical solution
+beta_r = beta_deg * np.pi / 180
+
+#r0 = 0.2 * (3 * np.cos(beta_r) **2 - 1)
+r0 = (24.0 / 35.0) * np.cos(beta_r)**2 - (2.0 / 7.0)
+et = (2 - 5 * r0)/(2 + r0)
+et [et>=1.0] = 1
+
+
 plt.figure()
 plt.plot(beta, funnel_et, 'ro-')
-plt.plot(beta, portrait_r0, 'yo-')
+plt.plot(beta, et, 'k--')
 
-plt.ylim([-0.5, 2])
+plt.legend(['funnel et', 'theoretical solution'])
 plt.xlabel('beta (angle between two dipoles)')
-plt.legend(['funnel et', 'portrait r0'])
+plt.ylabel('et')
+
+plt.figure()
+plt.plot(beta, portrait_r0, 'yo-')
+plt.plot(beta, r0, 'k--')
+
+plt.legend(['funnel et', 'theoretical solution'])
+plt.xlabel('beta (angle between two dipoles)')
+plt.ylabel('r0')
+
 
 plt.figure()
 plt.plot(funnel_et[0:9], portrait_r0[0:9], 'ko-')

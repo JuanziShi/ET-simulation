@@ -23,10 +23,10 @@ plt.rcParams.update({'font.size': 12})
 
 # small number of dipolse (mainly for checking)
 # set dipole orientation
-theta = np.array([0, 30, 60, 90])
+theta = np.array([0, 20, 40])
 
 # select dipoles to excite by generate a logic matrix. 1 means excite, 0 means not excite.
-bl = np.array([1, 1, 1, 1])
+bl = np.array([1, 1, 1])
 bl = (bl == 1)
 assert np.size(bl) == np.size(theta), 'bl array is wrong'
 
@@ -34,13 +34,13 @@ assert np.size(bl) == np.size(theta), 'bl array is wrong'
 # set steady state ET matrix
 # set steady state ET matrix 
 # Note! In the paper and Rafael's program, the np.sum(et.matrix,1) = 1 always.
-et_matrix = np.matrix([[0.4, 0.6, 0.0, 0.0],
-                       [0.0, 1.0, 0.0, 0.0],
-                       [0.0, 0.6, 0.4, 0.0],
-                       [0.0, 0.6, 0.0, 0.4]])
+et_matrix = np.matrix([[1.0, 0.0, 0.0],
+                       [0.0, 1.0, 0.0],
+                       [0.0, 0.0, 1.0]
+                       ])
 assert np.sum(et_matrix) == np.size(theta), 'et_matrix is wrong'                
 
-plt.close('all')
+# plt.close('all')
 # create instance P by class Polim
 P = Polim(theta, bl, et_matrix)
 
@@ -205,6 +205,56 @@ plt.legend(['model', 'Fet', 'Fnoet'])
 plt.figure()
 plt.imshow(model)
 (model[30,30]-model[30+90,30])/(model[30,30]+2*model[30+90,30])
+
+
+# Iex, Iem from raw, model, et, noet portrait
+model = P.modelfine_output
+Fet = P.Fetfine_output
+Fnoet = P.Fnoetfine_output
+raw_portrait = P.I_ex_em
+
+x = np.linspace(0, 180, 181)
+
+model_I_ex = np.sum(model, axis = 0)
+model_I_em = np.sum(model, axis = 1)
+
+Fet_I_ex = np.sum(Fet, axis = 0)
+Fet_I_em = np.sum(Fet, axis = 1)
+
+Fnoet_I_ex = np.sum(Fnoet, axis = 0)
+Fnoet_I_em = np.sum(Fnoet, axis = 1)
+
+raw_portrait_I_ex = np.sum(np.array(raw_portrait), axis = 0)
+raw_portrait_I_em = np.sum(np.array(raw_portrait), axis = 1)
+
+plt.figure()
+plt.plot(x, model_I_ex*np.sum(raw_portrait))
+plt.plot(x, Fet_I_ex*np.sum(raw_portrait))
+plt.plot(x, Fnoet_I_ex*np.sum(raw_portrait))
+plt.plot(x, raw_portrait_I_ex)
+plt.legend(['model', 'Fet', 'Fnoet', 'raw portrait'])
+
+plt.figure()
+plt.plot(x, model_I_em*np.sum(raw_portrait))
+plt.plot(x, Fet_I_em*np.sum(raw_portrait))
+plt.plot(x, Fnoet_I_em*np.sum(raw_portrait))
+plt.plot(x, raw_portrait_I_em)
+plt.legend(['model', 'Fet', 'Fnoet', 'raw portrait'])
+
+error = raw_portrait/(model*np.sum(raw_portrait))
+plt.figure()
+plt.imshow(error)
+plt.gca().invert_yaxis()
+plt.colorbar()
+
+
+
+
+
+
+
+
+
 
 
 

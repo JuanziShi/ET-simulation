@@ -184,8 +184,8 @@ class Polim:
         # these three lines are copied from movie.py, line 142, 143 and 1107
         # according to line 138 and 139, 6 and 4 correspond to the experimental ex and em angles.
         # The angles should be in radian unit
-        excitation_angles_grid  = np.linspace(0,np.pi,6, endpoint=False)
-        emission_angles_grid    = np.linspace(0,np.pi,4, endpoint=False)
+        excitation_angles_grid  = np.linspace(0,np.pi,6, endpoint = False)
+        emission_angles_grid    = np.linspace(0,np.pi,4, endpoint = False)
         EX, EM = np.meshgrid(excitation_angles_grid, emission_angles_grid)
         
         M_ex = self.portrait[1]
@@ -197,7 +197,7 @@ class Polim:
         # boundry
         LB = [0.0001,    phase_ex - np.pi/2, 0.0000, 0.0000]
         # UB = [0.999999, phase_ex + np.pi/2, 2 * (1 + M_ex)/(1 - M_ex)*.999, 1.000]
-        UB = [0.9999, phase_ex + np.pi/2, 2 * (1 + 0.9999*M_ex)/(1 - 0.9999*M_ex), 1.000]
+        UB = [0.9999, phase_ex + np.pi/2, 2 * (1 + 0.9999*M_ex)/(1 - 0.9999*M_ex), 1.0000]
         # print (LB)
         # print (UB)
         
