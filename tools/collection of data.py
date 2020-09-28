@@ -9,6 +9,7 @@ Created on Sun Sep 06 10:34:59 2020
 
 import numpy as np
 import matplotlib.pyplot as plt
+import addcopyfighandler
 # %%
 # 5. 'three dipoles' - a large system consisting of 1000 molecules
 # beta - Mex - et- anisotropy 
@@ -19,17 +20,33 @@ import matplotlib.pyplot as plt
 #N_system = np.array([1000])
 
 beta = np.array([0, 10, 20, 30, 40, 45])
+beta_r = beta * np.pi / 180
 Mex = np.array([1.00, 	0.93,	0.77,	0.50,	0.17,	0.00])
 portrait_r0 = np.array([0.386,	0.351,	0.273,	0.148,	0.069,	0.009])
 funnel_et = np.array([0.000,	0.060,	0.234,	0.501,	0.827,	1.000])
 
+r0 = (24.0 / 35.0) * np.cos(beta_r)**2 - (2.0 / 7.0)
+et = (2 - 5 * r0)/(2 + r0)
+et [et>=1.0] = 1
+
 plt.figure()
 plt.plot(beta, funnel_et, 'ro-')
-plt.plot(beta, portrait_r0, 'yo-')
+plt.plot(beta, et, 'k--')
 
-plt.ylim([-0.5, 1.2])
+plt.legend(['funnel et', 'analytical solution'])
 plt.xlabel('beta (angle between the side and center dipoles)')
-plt.legend(['funnel et', 'r0'])
+plt.ylabel('et')
+
+
+plt.figure()
+plt.plot(beta, portrait_r0, 'yo-')
+plt.plot(beta, r0, 'k--')
+
+plt.legend(['r0 calculated from 2D portrait', 'analytical solution'])
+plt.xlabel('beta (angle between the side and center dipoles)')
+plt.ylabel('r0')
+
+
 
 plt.figure()
 plt.plot(Mex, funnel_et, 'ro-')
@@ -51,7 +68,7 @@ plt.legend(['funnel et', 'r0'])
 # N_system = np.array([1000])
 
 # simulation data
-beta = np.linspace(0, 180, 19)
+beta_deg = np.linspace(0, 180, 19)
 portrait_r0 = np.array([0.381,	0.352,	0.304,	0.175,	0.078,	-0.048,	-0.168,	-0.235,	-0.262,	-0.276,	-0.272,	-0.226,	-0.151,	-0.071,	0.080,	0.194,	0.265, 0.364, 0.406])
 funnel_et = np.array([0.000,	0.061,	0.234,	0.499,	0.826,	1.000,	1.000,	1.000,	1.000,	1.000,	1.000,	1.000,	1.000,	1.000,	0.827,	0.500,	0.234, 0.06, 0.00])
 
@@ -68,7 +85,7 @@ plt.figure()
 plt.plot(beta, funnel_et, 'ro-')
 plt.plot(beta, et, 'k--')
 
-plt.legend(['funnel et', 'theoretical solution'])
+plt.legend(['funnel et', 'analytical solution'])
 plt.xlabel('beta (angle between two dipoles)')
 plt.ylabel('et')
 
@@ -76,7 +93,7 @@ plt.figure()
 plt.plot(beta, portrait_r0, 'yo-')
 plt.plot(beta, r0, 'k--')
 
-plt.legend(['funnel et', 'theoretical solution'])
+plt.legend(['r0 calculated from 2D portrait', 'analytical solution'])
 plt.xlabel('beta (angle between two dipoles)')
 plt.ylabel('r0')
 
