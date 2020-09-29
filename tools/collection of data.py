@@ -9,7 +9,29 @@ Created on Sun Sep 06 10:34:59 2020
 
 import numpy as np
 import matplotlib.pyplot as plt
-import addcopyfighandler
+
+plt.rcParams.update({'font.size': 16})
+
+# %%
+# 6. unsymmetric absorption. [0 60 70 90]
+# no et, the model does not work well.
+# et, the higher the et, the better the model.
+
+M	= np.array([0.9999, 0.9999,	0.9928, 0.9901, 0.9918, 0.9938,	0.9956, 0.9970, 0.9982, 0.9992,	0.9999])
+phase = np.array([1.6413, 1.2787, 1.1555, 1.1102,	1.0876, 1.0740, 1.0650, 1.0586,	1.0538, 1.0501, 1.0472])
+gr = np.array([3.4697, 3.4749, 3.4712,	3.4740, 3.4768, 3.4797, 3.4825,	3.4854, 3.4881, 3.4911, 1.0453])
+et = np.array([0.0001, 0.1076, 0.2005,	0.3001, 0.3998, 0.4996, 0.5995,	0.6994, 0.7995, 0.8997, 1.0000])
+resi = np.array([0.0355,	0.0311, 0.0277, 0.0242, 0.0207,	0.0173, 0.0138, 0.0104, 0.0069,	0.0035, 0.0000])
+
+phase_deg = phase * 180 / np.pi
+
+plt.figure()
+plt.plot(et, resi, 'ko-')
+plt.xlabel('et')
+plt.ylabel('resi')
+
+
+
 # %%
 # 5. 'three dipoles' - a large system consisting of 1000 molecules
 # beta - Mex - et- anisotropy 
@@ -20,33 +42,17 @@ import addcopyfighandler
 #N_system = np.array([1000])
 
 beta = np.array([0, 10, 20, 30, 40, 45])
-beta_r = beta * np.pi / 180
 Mex = np.array([1.00, 	0.93,	0.77,	0.50,	0.17,	0.00])
 portrait_r0 = np.array([0.386,	0.351,	0.273,	0.148,	0.069,	0.009])
 funnel_et = np.array([0.000,	0.060,	0.234,	0.501,	0.827,	1.000])
 
-r0 = (24.0 / 35.0) * np.cos(beta_r)**2 - (2.0 / 7.0)
-et = (2 - 5 * r0)/(2 + r0)
-et [et>=1.0] = 1
-
 plt.figure()
 plt.plot(beta, funnel_et, 'ro-')
-plt.plot(beta, et, 'k--')
-
-plt.legend(['funnel et', 'analytical solution'])
-plt.xlabel('beta (angle between the side and center dipoles)')
-plt.ylabel('et')
-
-
-plt.figure()
 plt.plot(beta, portrait_r0, 'yo-')
-plt.plot(beta, r0, 'k--')
 
-plt.legend(['r0 calculated from 2D portrait', 'analytical solution'])
+plt.ylim([-0.5, 1.2])
 plt.xlabel('beta (angle between the side and center dipoles)')
-plt.ylabel('r0')
-
-
+plt.legend(['funnel et', 'r0'])
 
 plt.figure()
 plt.plot(Mex, funnel_et, 'ro-')
@@ -68,7 +74,7 @@ plt.legend(['funnel et', 'r0'])
 # N_system = np.array([1000])
 
 # simulation data
-beta_deg = np.linspace(0, 180, 19)
+beta = np.linspace(0, 180, 19)
 portrait_r0 = np.array([0.381,	0.352,	0.304,	0.175,	0.078,	-0.048,	-0.168,	-0.235,	-0.262,	-0.276,	-0.272,	-0.226,	-0.151,	-0.071,	0.080,	0.194,	0.265, 0.364, 0.406])
 funnel_et = np.array([0.000,	0.061,	0.234,	0.499,	0.826,	1.000,	1.000,	1.000,	1.000,	1.000,	1.000,	1.000,	1.000,	1.000,	0.827,	0.500,	0.234, 0.06, 0.00])
 
@@ -85,7 +91,7 @@ plt.figure()
 plt.plot(beta, funnel_et, 'ro-')
 plt.plot(beta, et, 'k--')
 
-plt.legend(['funnel et', 'analytical solution'])
+plt.legend(['funnel et', 'theoretical solution'])
 plt.xlabel('beta (angle between two dipoles)')
 plt.ylabel('et')
 
@@ -93,7 +99,7 @@ plt.figure()
 plt.plot(beta, portrait_r0, 'yo-')
 plt.plot(beta, r0, 'k--')
 
-plt.legend(['r0 calculated from 2D portrait', 'analytical solution'])
+plt.legend(['funnel et', 'theoretical solution'])
 plt.xlabel('beta (angle between two dipoles)')
 plt.ylabel('r0')
 
