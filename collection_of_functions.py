@@ -120,6 +120,8 @@ def compute_ex_em_modulation_phase(I_ex_em, theta):
     
     # calculate ex modulation depth and phase
     M_ex = (np.amax(I_ex) - np.amin(I_ex))/(np.amax(I_ex) + np.amin(I_ex))
+
+    
     if M_ex < 1e-6:
         M_ex = 0.0
         phase_ex = 45 * np.pi / 180
@@ -137,16 +139,19 @@ def compute_ex_em_modulation_phase(I_ex_em, theta):
     return I0, M_ex, phase_ex, M_em, phase_em 
     
 
+# symmetric three dipole model
 def SFA_full_func( params, ex_angles, em_angles, md_ex, phase_ex ):
+    
     md_fu = params[0]
     th_fu = params[1]
     gr    = params[2]
     et    = params[3]
+    alpha = params[4]
 
     EX, EM = ex_angles.flatten(), em_angles.flatten()
     # calculate angle between off-axis dipoles in symmetric model
     if np.isnan(gr): gr=1.0
-    alpha = 0.5 * np.arccos( .5*(((gr+2)*md_ex)-gr) )
+    alpha = 0.5 * np.arccos( .5*(((gr+2.0)*md_ex)-gr) )
 
     ph_ii_minus = phase_ex - alpha
     ph_ii_plus  = phase_ex + alpha
@@ -166,7 +171,44 @@ def SFA_full_func( params, ex_angles, em_angles, md_ex, phase_ex ):
     
 
     return et*Fet + (1-et)*Fnoet
+'''
 
+def SFA_full_func( params, ex_angles, em_angles, md_ex, phase_ex ):
+    
+    #unsymmetric three dipole model
+    
+    md_fu = params[0]
+    th_fu = params[1]
+    gr    = params[2]
+    et    = params[3]
+    alpha = params[4]
+    beta  = params[5]
+
+    EX, EM = ex_angles.flatten(), em_angles.flatten()
+    # calculate angle between off-axis dipoles in symmetric model
+    if np.isnan(gr): gr=1.0
+    
+    # alpha = 0.5 * np.arccos( .5*(((gr+2.0)*md_ex)-gr) )
+
+    ph_ii_minus = phase_ex - alpha
+    ph_ii_plus  = phase_ex + beta
+
+    # print EX
+    # print EM
+    # print np.cos( EX-ph_ii_minus )**2 * np.cos( EM-ph_ii_minus )**2
+    # raise SystemExit
+    Fnoet  =    np.cos( EX-ph_ii_minus )**2 * np.cos( EM-ph_ii_minus )**2
+    Fnoet += gr*np.cos( EX-phase_ex )**2 * np.cos( EM-phase_ex )**2
+    Fnoet +=    np.cos( EX-ph_ii_plus )**2 * np.cos( EM-ph_ii_plus )**2
+    Fnoet /= (2.0+gr)    # irrelevant, because we sum-normalize below!
+    Fnoet /= np.sum(Fnoet)
+
+    Fet   = .25 * (1+md_ex*np.cos(2*(EX-phase_ex))) * (1+md_fu*np.cos(2*(EM-th_fu)))
+    Fet  /= np.sum(Fet)
+    
+
+    return et*Fet + (1-et)*Fnoet
+'''
 
 def SFA_full_error( params, ex_angles, em_angles, md_ex, phase_ex, Ftot ):
     diff = Ftot - SFA_full_func( params, ex_angles, em_angles, md_ex, phase_ex )
