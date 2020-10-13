@@ -69,6 +69,8 @@ class Polim:
         # excite the sample using linearly polarized light at different angles
         E_absorption = np.dot(E_excitation, self.dip_ori)
         I_absorption = E_absorption ** 2
+        print (np.shape(E_excitation))
+        print (np.shape(self.dip_ori))
         # print ('I')
         # print (I_absorption)
         # plt.plot(np.linspace(0,np.pi,181),E_absorption)
@@ -78,7 +80,7 @@ class Polim:
         # bl is a logic matrix. It sets the non-excited dipoles (one column in I_absorption) as zeros       
         I_absorption_bl = np.zeros(np.shape(I_absorption))
         I_absorption_bl[:,self.bl] = I_absorption[:,self.bl]
-        #print ('I_bl')
+        # print ('I_bl')
         # print (I_absorption_bl[:,200])
         
         
@@ -179,252 +181,253 @@ class Polim:
     
   
 
-    # def compute_SFA3(self):
-    #     # unsymmetric three dipole model
+    def compute_SFA3(self):
+         # unsymmetric three dipole model
         
-    #     # fit by SFA+3 model
-    #     # these three lines are copied from movie.py, line 142, 143 and 1107
-    #     # according to line 138 and 139, 6 and 4 correspond to the experimental ex and em angles.
-    #     # The angles should be in radian unit
+         # fit by SFA+3 model
+         # these three lines are copied from movie.py, line 142, 143 and 1107
+         # according to line 138 and 139, 6 and 4 correspond to the experimental ex and em angles.
+         # The angles should be in radian unit
         
-    #     excitation_angles_grid  = np.linspace(0,np.pi,6, endpoint = False)
-    #     emission_angles_grid    = np.linspace(0,np.pi,4, endpoint = False)
-    #     EX, EM = np.meshgrid(excitation_angles_grid, emission_angles_grid)
+         excitation_angles_grid  = np.linspace(0,np.pi,6, endpoint = False)
+         emission_angles_grid    = np.linspace(0,np.pi,4, endpoint = False)
+         EX, EM = np.meshgrid(excitation_angles_grid, emission_angles_grid)
         
-    #     M_ex = self.portrait[1]
-    #     phase_ex = self.portrait[2]
+         M_ex = self.portrait[1]
+         phase_ex = self.portrait[2]
                 
-    #     # # starting point
-    #     # a0 = [M_ex, phase_ex, 1.0, .5]
+         # # starting point
+         # a0 = [M_ex, phase_ex, 1.0, .5]
         
-    #     # # boundry
-    #     # LB = [0.000001,    phase_ex - np.pi/2, 0.0000, 0.0000]        
-    #     # UB = [0.9999, phase_ex + np.pi/2, 2 * (1 + 0.9999*M_ex)/(1 - 0.9999*M_ex), 1.0000]
-    #     # # print (LB)
-    #     # # print (UB)
+         # # boundry
+         # LB = [0.000001,    phase_ex - np.pi/2, 0.0000, 0.0000]        
+         # UB = [0.9999, phase_ex + np.pi/2, 2 * (1 + 0.9999*M_ex)/(1 - 0.9999*M_ex), 1.0000]
+         # # print (LB)
+         # # print (UB)
 
-    #     a0 = [M_ex, phase_ex, 1.0, .5, 0.5 * np.arccos( .5*(((1.0+2.0)*M_ex)-1.0) ), 0.5 * np.arccos( .5*(((1.0+2.0)*M_ex)-1.0) )]
+         a0 = [M_ex, phase_ex, 1.0, .5, 0.5 * np.arccos( .5*(((1.0+2.0)*M_ex)-1.0) ), 0.5 * np.arccos( .5*(((1.0+2.0)*M_ex)-1.0) )]
         
-    #     # boundry
-    #     LB = [0.000001,    phase_ex - np.pi/2, 0.0000, 0.0000, phase_ex - np.pi/2, phase_ex - np.pi/2]     
-    #     UB = [0.9999, phase_ex + np.pi/2, 2 * (1 + 0.9999*M_ex)/(1 - 0.9999*M_ex), 1.0000, phase_ex + np.pi/2, phase_ex + np.pi/2]        
+         # boundry
+         LB = [0.000001, phase_ex - np.pi/2, 0.0000, 0.0000, phase_ex - np.pi/2, phase_ex - np.pi/2]     
+         UB = [0.999999, phase_ex + np.pi/2, 2 * (1 + 0.9999*M_ex)/(1 - 0.9999*M_ex), 1.0000, phase_ex + np.pi/2, phase_ex + np.pi/2]        
         
   
-    #     # a0 = [1.0, 36.0*np.pi/180, 1.0, 0.5]
-    #     # LB = [0.9998,    36.0*np.pi/180, 0.0000, 0.000]
-    #     # UB = [0.9999, 36.0*np.pi/180, 2 * (1 + 0.9999*M_ex)/(1 - 0.9999*M_ex), 1.000]
+         # a0 = [1.0, 36.0*np.pi/180, 1.0, 0.5]
+         # LB = [0.9998,    36.0*np.pi/180, 0.0000, 0.000]
+         # UB = [0.9999, 36.0*np.pi/180, 2 * (1 + 0.9999*M_ex)/(1 - 0.9999*M_ex), 1.000]
         
         
-    #     # I_ex_em 181*181. select data and put in Ftotnormed 4*6  
-    #     column_index = list(range(0,180,30)) # coordinate - angels - intensity. 6 angles for excitation
-    #     row_index = list(range(0,180,45)) # coordinate - angels - intensity. 4 angles for emission
+         # I_ex_em 181*181. select data and put in Ftotnormed 4*6  
+         column_index = list(range(0,180,30)) # coordinate - angels - intensity. 6 angles for excitation
+         row_index = list(range(0,180,45)) # coordinate - angels - intensity. 4 angles for emission
         
-    #     Ftot = np.empty((0, 6))
+         Ftot = np.empty((0, 6))
         
-    #     for i in row_index:
-    #         Ftot = np.append(Ftot, self.I_ex_em[i, column_index]) 
-    #         # print(Ftot)
+         for i in row_index:
+             Ftot = np.append(Ftot, self.I_ex_em[i, column_index]) 
+             # print(Ftot)
     
-    #     # normalization. It is according to movie.py, line 1138
-    #     # Note, after normalization, np.sum(Ftotnormed = 1)
-    #     Ftotnormed = Ftot/np.sum(Ftot)
+         # normalization. It is according to movie.py, line 1138
+         # Note, after normalization, np.sum(Ftotnormed = 1)
+         Ftotnormed = Ftot/np.sum(Ftot)
         
-    #     funargs = (EX, EM, M_ex, phase_ex, Ftotnormed)
+         funargs = (EX, EM, M_ex, phase_ex, Ftotnormed)
         
-    #     fac = 1e4 
-    #     pg = 1e-9 
-    #     epsi = 1e-11
+         fac = 1e4 
+         pg = 1e-9 
+         epsi = 1e-11
         
-    #     fitresult = so.fmin_l_bfgs_b( func=cf.SFA_full_error, \
-    #                                   x0=a0, \
-    #                                       fprime=None, \
-    #                                           args=funargs, \
-    #                                               approx_grad=True, \
-    #                                                   epsilon=epsi, \
-    #                                                       bounds=list(zip(LB,UB)), \
-    #                                                           factr=fac, \
-    #                                                               pgtol=pg )
+         fitresult = so.fmin_l_bfgs_b( func=cf.SFA_full_error, \
+                                       x0=a0, \
+                                           fprime=None, \
+                                               args=funargs, \
+                                                   approx_grad=True, \
+                                                       epsilon=epsi, \
+                                                           bounds=list(zip(LB,UB)), \
+                                                               factr=fac, \
+                                                                   pgtol=pg )
             
         
-    #     self.fitresult = fitresult
-    #     self.Ftot = Ftot
+         self.fitresult = fitresult
+         self.Ftot = Ftot
         
-    #     return 
-
-
-    # def plot_SFA3(self):
-        
-    #     # unsymmetric three dipole model
-    #     # plot fitting results: model, Fet, Fnoet. 
-    #     # This is a good way to check fitting property
-        
-    #     md_fu = self.fitresult[0][0]
-    #     th_fu = self.fitresult[0][1]
-    #     gr    = self.fitresult[0][2]
-    #     et    = self.fitresult[0][3]
-    #     alpha = self.fitresult[0][4]
-    #     beta  = self.fitresult[0][5]
-    #     resi  = self.fitresult[1]
-        
-    #     M_ex = self.portrait[1]
-    #     phase_ex = self.portrait[2]
-        
-    #     excitation_angles_grid  = np.linspace(0,np.pi,6, endpoint=False)
-    #     emission_angles_grid    = np.linspace(0,np.pi,4, endpoint=False)
-    #     EX, EM = np.meshgrid(excitation_angles_grid, emission_angles_grid)
-        
-    #     self.samsum = np.sum(self.Ftot)
-    #     self.Fnoet = cf.SFA_full_func( [md_fu,th_fu,gr,0,alpha, beta], EX, EM, M_ex, phase_ex )
-    #     self.Fet   = cf.SFA_full_func( [md_fu,th_fu,gr,1,alpha, beta], EX, EM, M_ex, phase_ex )
-    #     self.model = cf.SFA_full_func( [md_fu,th_fu,gr,et,alpha, beta], EX, EM, M_ex, phase_ex)
-        
-    #     Fnoet_r = self.Fnoet.reshape(np.size(emission_angles_grid),np.size(excitation_angles_grid))
-    #     Fet_r = self.Fet.reshape(np.size(emission_angles_grid),np.size(excitation_angles_grid))
-    #     model_r = self.model.reshape(np.size(emission_angles_grid),np.size(excitation_angles_grid))
-    #     Ftot_r = self.Ftot.reshape(np.size(emission_angles_grid),np.size(excitation_angles_grid))
-
-        
-    #     fig, ax = plt.subplots(1, 4, sharex='all', sharey='all', figsize=(17, 4))
-    #     s_em = range(len(emission_angles_grid))
-        
-    #     for n in s_em:
-           
-    #         ax[n].plot(excitation_angles_grid, self.samsum*Fet_r[n], 'b>-',  alpha=0.6)
-    #         ax[n].plot(excitation_angles_grid, self.samsum*Fnoet_r[n], 'go-',  alpha=0.6)
-    #         ax[n].plot(excitation_angles_grid, self.samsum*model_r[n], 'rd-',  alpha=0.6)
-    #         ax[n].plot(excitation_angles_grid, Ftot_r[n], 'yp--',  alpha=0.6)
-            
-    #         ax[n].set_xlim([0, np.pi])
-    #         ax[n].set_xlabel('ex')
-    #         ax[n].set_title('em'+str(emission_angles_grid[n]*180/np.pi))
-            
-        
-    #     plt.legend(['Fet', 'Fnoet', 'model', 'Ftot'])
-    #     th_fu_deg = th_fu*180/np.pi
-    #     alpha_deg = alpha*180/np.pi
-    #     beta_deg = beta*180/np.pi
-    #     plt.suptitle( 'md_fu=%f th_fu_deg=%f gr=%f et=%f alpha=%f beta=%f resi=%f ' % (md_fu, th_fu_deg, gr, et, alpha_deg, beta_deg, resi))
-               
-    #     return
-      
-
-
-
-    def compute_SFA3(self):
-        
-        # symmetric three dipole model
-        
-        # fit by SFA+3 model
-        # these three lines are copied from movie.py, line 142, 143 and 1107
-        # according to line 138 and 139, 6 and 4 correspond to the experimental ex and em angles.
-        # The angles should be in radian unit
-        excitation_angles_grid  = np.linspace(0,np.pi,6, endpoint = False)
-        emission_angles_grid    = np.linspace(0,np.pi,4, endpoint = False)
-        EX, EM = np.meshgrid(excitation_angles_grid, emission_angles_grid)
-        
-        M_ex = self.portrait[1]
-        phase_ex = self.portrait[2]
-                
-        # starting point
-        a0 = [M_ex, phase_ex, 1.0, .5, 0.5 * np.arccos( .5*(((1.0+2.0)*M_ex)-1.0) )]
-
-        # boundry
-        LB = [0.0001,    phase_ex - np.pi/2, 0.0000, 0.0000, phase_ex - np.pi/2]
-        UB = [0.9999, phase_ex + np.pi/2, 2 * (1 + 0.9999*M_ex)/(1 - 0.9999*M_ex), 1.0000, phase_ex + np.pi/2]
-        # print (LB)
-        # print (UB)
-        
-        
-        # I_ex_em 181*181. select data and put in Ftotnormed 4*6  
-        column_index = list(range(0,180,30)) # coordinate - angels - intensity. 6 angles for excitation
-        row_index = list(range(0,180,45)) # coordinate - angels - intensity. 4 angles for emission
-        
-        Ftot = np.empty((0, 6))
-        
-        for i in row_index:
-            Ftot = np.append(Ftot, self.I_ex_em[i, column_index]) 
-            # print(Ftot)
-    
-        # normalization. It is according to movie.py, line 1138
-        # Note, after normalization, np.sum(Ftotnormed = 1)
-        Ftotnormed = Ftot/np.sum(Ftot)
-        
-        funargs = (EX, EM, M_ex, phase_ex, Ftotnormed)
-        
-        fac = 1e4 
-        pg = 1e-9 
-        epsi = 1e-11
-        
-        fitresult = so.fmin_l_bfgs_b( func=cf.SFA_full_error, \
-                                      x0=a0, \
-                                          fprime=None, \
-                                              args=funargs, \
-                                                  approx_grad=True, \
-                                                      epsilon=epsi, \
-                                                          bounds=list(zip(LB,UB)), \
-                                                              factr=fac, \
-                                                                  pgtol=pg )
-            
-        
-        self.fitresult = fitresult
-        self.Ftot = Ftot
-        
-        return 
+         return 
 
 
     def plot_SFA3(self):
         
-        # symmetric three dipole model 
+         # unsymmetric three dipole model
+         # plot fitting results: model, Fet, Fnoet. 
+         # This is a good way to check fitting property
         
-        # plot fitting results: model, Fet, Fnoet. 
-        # This is a good way to check fitting property
+         md_fu = self.fitresult[0][0]
+         th_fu = self.fitresult[0][1]
+         gr    = self.fitresult[0][2]
+         et    = self.fitresult[0][3]
+         alpha = self.fitresult[0][4]
+         beta  = self.fitresult[0][5]
+         resi  = self.fitresult[1]
         
-        md_fu = self.fitresult[0][0]
-        th_fu = self.fitresult[0][1]
-        gr    = self.fitresult[0][2]
-        et    = self.fitresult[0][3]
-        alpha = self.fitresult[0][4]
-        resi  = self.fitresult[1]
+         M_ex = self.portrait[1]
+         phase_ex = self.portrait[2]
         
-        M_ex = self.portrait[1]
-        phase_ex = self.portrait[2]
+         excitation_angles_grid  = np.linspace(0,np.pi,6, endpoint=False)
+         emission_angles_grid    = np.linspace(0,np.pi,4, endpoint=False)
+         EX, EM = np.meshgrid(excitation_angles_grid, emission_angles_grid)
         
-        excitation_angles_grid  = np.linspace(0,np.pi,6, endpoint=False)
-        emission_angles_grid    = np.linspace(0,np.pi,4, endpoint=False)
-        EX, EM = np.meshgrid(excitation_angles_grid, emission_angles_grid)
+         self.samsum = np.sum(self.Ftot)
+         self.Fnoet = cf.SFA_full_func( [md_fu,th_fu,gr,0,alpha, beta], EX, EM, M_ex, phase_ex )
+         self.Fet   = cf.SFA_full_func( [md_fu,th_fu,gr,1,alpha, beta], EX, EM, M_ex, phase_ex )
+         self.model = cf.SFA_full_func( [md_fu,th_fu,gr,et,alpha, beta], EX, EM, M_ex, phase_ex)
         
-        self.samsum = np.sum(self.Ftot)
-        self.Fnoet = cf.SFA_full_func( [md_fu,th_fu,gr,0, alpha], EX, EM, M_ex, phase_ex )
-        self.Fet   = cf.SFA_full_func( [md_fu,th_fu,gr,1, alpha], EX, EM, M_ex, phase_ex )
-        self.model = cf.SFA_full_func( [md_fu,th_fu,gr,et, alpha], EX, EM, M_ex, phase_ex)
-        
-        Fnoet_r = self.Fnoet.reshape(np.size(emission_angles_grid),np.size(excitation_angles_grid))
-        Fet_r = self.Fet.reshape(np.size(emission_angles_grid),np.size(excitation_angles_grid))
-        model_r = self.model.reshape(np.size(emission_angles_grid),np.size(excitation_angles_grid))
-        Ftot_r = self.Ftot.reshape(np.size(emission_angles_grid),np.size(excitation_angles_grid))
+         Fnoet_r = self.Fnoet.reshape(np.size(emission_angles_grid),np.size(excitation_angles_grid))
+         Fet_r = self.Fet.reshape(np.size(emission_angles_grid),np.size(excitation_angles_grid))
+         model_r = self.model.reshape(np.size(emission_angles_grid),np.size(excitation_angles_grid))
+         Ftot_r = self.Ftot.reshape(np.size(emission_angles_grid),np.size(excitation_angles_grid))
 
         
-        fig, ax = plt.subplots(1, 4, sharex='all', sharey='all', figsize=(17, 4))
-        s_em = range(len(emission_angles_grid))
+         fig, ax = plt.subplots(1, 4, sharex='all', sharey='all', figsize=(17, 4))
+         s_em = range(len(emission_angles_grid))
         
-        for n in s_em:
+         for n in s_em:
            
-            ax[n].plot(excitation_angles_grid, self.samsum*Fet_r[n], 'b>-',  alpha=0.6)
-            ax[n].plot(excitation_angles_grid, self.samsum*Fnoet_r[n], 'go-',  alpha=0.6)
-            ax[n].plot(excitation_angles_grid, self.samsum*model_r[n], 'rd-',  alpha=0.6)
-            ax[n].plot(excitation_angles_grid, Ftot_r[n], 'yp--',  alpha=0.6)
+             ax[n].plot(excitation_angles_grid, self.samsum*Fet_r[n], 'b>-',  alpha=0.6)
+             ax[n].plot(excitation_angles_grid, self.samsum*Fnoet_r[n], 'go-',  alpha=0.6)
+             ax[n].plot(excitation_angles_grid, self.samsum*model_r[n], 'rd-',  alpha=0.6)
+             ax[n].plot(excitation_angles_grid, Ftot_r[n], 'yp--',  alpha=0.6)
             
-            ax[n].set_xlim([0, np.pi])
-            ax[n].set_xlabel('ex')
-            ax[n].set_title('em'+str(emission_angles_grid[n]*180/np.pi))
+             ax[n].set_xlim([0, np.pi])
+             ax[n].set_xlabel('ex')
+             ax[n].set_title('em'+str(emission_angles_grid[n]*180/np.pi))
             
         
-        plt.legend(['Fet', 'Fnoet', 'model', 'Ftot'])
-        th_fu_deg = th_fu*180/np.pi
-        plt.suptitle( 'md_fu=%f th_fu_deg=%f gr=%f alpha=%f et=%f resi=%f' % (md_fu, th_fu_deg, gr, alpha, et, resi))
-    
-                
-        return
+         plt.legend(['Fet', 'Fnoet', 'model', 'Ftot'])
+         th_fu_deg = th_fu*180/np.pi
+         alpha_deg = alpha*180/np.pi
+         beta_deg = beta*180/np.pi
+         plt.suptitle( 'md_fu=%f th_fu_deg=%f gr=%f et=%f alpha=%f beta=%f resi=%f ' % (md_fu, th_fu_deg, gr, et, alpha_deg, beta_deg, resi))
+               
+         return
+      
+
+
+
+#    def compute_SFA3(self):
+#        
+#        # symmetric three dipole model
+#        
+#        # fit by SFA+3 model
+#        # these three lines are copied from movie.py, line 142, 143 and 1107
+#        # according to line 138 and 139, 6 and 4 correspond to the experimental ex and em angles.
+#        # The angles should be in radian unit
+#        excitation_angles_grid  = np.linspace(0,np.pi,6, endpoint = False)
+#        emission_angles_grid    = np.linspace(0,np.pi,4, endpoint = False)
+#        EX, EM = np.meshgrid(excitation_angles_grid, emission_angles_grid)
+#        
+#        M_ex = self.portrait[1]
+#        phase_ex = self.portrait[2]
+#                
+#        # starting point
+#        a0 = [M_ex, phase_ex, 1.0, .5, 0.5 * np.arccos( .5*(((1.0+2.0)*M_ex)-1.0) )]
+#
+#        # boundry
+#        LB = [0.0001,    phase_ex - np.pi/2, 0.0000, 0.0000, phase_ex - np.pi/2]
+#        UB = [0.9999, phase_ex + np.pi/2, 2 * (1 + 0.9999*M_ex)/(1 - 0.9999*M_ex), 0.0000, phase_ex + np.pi/2]
+#        # print (LB)
+#        # print (UB)
+#        
+#        
+#        # I_ex_em 181*181. select data and put in Ftotnormed 4*6  
+#        column_index = list(range(0,180,30)) # coordinate - angels - intensity. 6 angles for excitation
+#        row_index = list(range(0,180,45)) # coordinate - angels - intensity. 4 angles for emission
+#        
+#        Ftot = np.empty((0, 6))
+#        
+#        for i in row_index:
+#            Ftot = np.append(Ftot, self.I_ex_em[i, column_index]) 
+#            # print(Ftot)
+#    
+#        # normalization. It is according to movie.py, line 1138
+#        # Note, after normalization, np.sum(Ftotnormed = 1)
+#        Ftotnormed = Ftot/np.sum(Ftot)
+#        
+#        funargs = (EX, EM, M_ex, phase_ex, Ftotnormed)
+#        
+#        fac = 1e4 
+#        pg = 1e-9 
+#        epsi = 1e-11
+#        
+#        fitresult = so.fmin_l_bfgs_b( func=cf.SFA_full_error, \
+#                                      x0=a0, \
+#                                          fprime=None, \
+#                                              args=funargs, \
+#                                                  approx_grad=True, \
+#                                                      epsilon=epsi, \
+#                                                          bounds=list(zip(LB,UB)), \
+#                                                              factr=fac, \
+#                                                                  pgtol=pg )
+#            
+#        
+#        self.fitresult = fitresult
+#        self.Ftot = Ftot
+#        
+#        return 
+
+
+#    def plot_SFA3(self):
+#        
+#        # symmetric three dipole model 
+#        
+#        # plot fitting results: model, Fet, Fnoet. 
+#        # This is a good way to check fitting property
+#        
+#        md_fu = self.fitresult[0][0]
+#        th_fu = self.fitresult[0][1]
+#        gr    = self.fitresult[0][2]
+#        et    = self.fitresult[0][3]
+#        alpha = self.fitresult[0][4]
+#        resi  = self.fitresult[1]
+#        
+#        M_ex = self.portrait[1]
+#        phase_ex = self.portrait[2]
+#        
+#        excitation_angles_grid  = np.linspace(0,np.pi,6, endpoint=False)
+#        emission_angles_grid    = np.linspace(0,np.pi,4, endpoint=False)
+#        EX, EM = np.meshgrid(excitation_angles_grid, emission_angles_grid)
+#        
+#        self.samsum = np.sum(self.Ftot)
+#        self.Fnoet = cf.SFA_full_func( [md_fu,th_fu,gr,0, alpha], EX, EM, M_ex, phase_ex )
+#        self.Fet   = cf.SFA_full_func( [md_fu,th_fu,gr,1, alpha], EX, EM, M_ex, phase_ex )
+#        self.model = cf.SFA_full_func( [md_fu,th_fu,gr,et, alpha], EX, EM, M_ex, phase_ex)
+#        
+#        Fnoet_r = self.Fnoet.reshape(np.size(emission_angles_grid),np.size(excitation_angles_grid))
+#        Fet_r = self.Fet.reshape(np.size(emission_angles_grid),np.size(excitation_angles_grid))
+#        model_r = self.model.reshape(np.size(emission_angles_grid),np.size(excitation_angles_grid))
+#        Ftot_r = self.Ftot.reshape(np.size(emission_angles_grid),np.size(excitation_angles_grid))
+#
+#        
+#        fig, ax = plt.subplots(1, 4, sharex='all', sharey='all', figsize=(17, 4))
+#        s_em = range(len(emission_angles_grid))
+#        
+#        for n in s_em:
+#           
+#            ax[n].plot(excitation_angles_grid, self.samsum*Fet_r[n], 'b>-',  alpha=0.6)
+#            ax[n].plot(excitation_angles_grid, self.samsum*Fnoet_r[n], 'go-',  alpha=0.6)
+#            ax[n].plot(excitation_angles_grid, self.samsum*model_r[n], 'rd-',  alpha=0.6)
+#            ax[n].plot(excitation_angles_grid, Ftot_r[n], 'yp--',  alpha=0.6)
+#            
+#            ax[n].set_xlim([0, np.pi])
+#            ax[n].set_xlabel('ex')
+#            ax[n].set_title('em'+str(emission_angles_grid[n]*180/np.pi))
+#            
+#        
+#        plt.legend(['Fet', 'Fnoet', 'model', 'Ftot'])
+#        th_fu_deg = th_fu*180/np.pi
+#        alpha_deg = alpha*180/np.pi
+#        plt.suptitle( 'md_fu=%f th_fu_deg=%f gr=%f alpha=%f et=%f resi=%f' % (md_fu, th_fu_deg, gr, alpha_deg, et, resi))
+#    
+#                
+#        return
 
 
    
@@ -434,6 +437,8 @@ class Polim:
         th_fu = self.fitresult[0][1]
         gr    = self.fitresult[0][2]
         et    = self.fitresult[0][3]
+        alpha = self.fitresult[0][4]
+        beta  = self.fitresult[0][5]
         
         md_ex = self.portrait[1]
         phase_ex = self.portrait[2]
@@ -442,11 +447,30 @@ class Polim:
         emafine = np.linspace( 0, np.pi, 181 )
         EXfine, EMfine = np.meshgrid( exafine, emafine )
     
+#        # symmetric three dipole model
+#        if np.isnan(gr): gr=1.0
+#        # alpha = 0.5 * np.arccos( .5*(((gr+2)*md_ex)-gr) )
+#
+#        ph_ii_minus = phase_ex - alpha
+#        ph_ii_plus  = phase_ex + alpha
+#        
+#        Fnoetfine  =    np.cos( EXfine-ph_ii_minus )**2 * np.cos( EMfine-ph_ii_minus )**2
+#        Fnoetfine += gr*np.cos( EXfine-phase_ex )**2 * np.cos( EMfine-phase_ex )**2
+#        Fnoetfine +=    np.cos( EXfine-ph_ii_plus )**2 * np.cos( EMfine-ph_ii_plus )**2
+#        Fnoetfine /= (2.0+gr)
+#        Fnoetfine /= np.sum(Fnoetfine)
+#    
+#        Fetfine    = .25 * (1 + md_ex * np.cos(2 * (EXfine - phase_ex))) * (1 + md_fu * np.cos(2 * (EMfine - th_fu)))
+#        Fetfine   /= np.sum(Fetfine)
+#    
+#        modelfine  = et * Fetfine + (1 - et) * Fnoetfine
+        
+        # unsymmetric three dipole model
         if np.isnan(gr): gr=1.0
-        alpha = 0.5 * np.arccos( .5*(((gr+2)*md_ex)-gr) )
+        # alpha = 0.5 * np.arccos( .5*(((gr+2)*md_ex)-gr) )
 
         ph_ii_minus = phase_ex - alpha
-        ph_ii_plus  = phase_ex + alpha
+        ph_ii_plus  = phase_ex + beta
         
         Fnoetfine  =    np.cos( EXfine-ph_ii_minus )**2 * np.cos( EMfine-ph_ii_minus )**2
         Fnoetfine += gr*np.cos( EXfine-phase_ex )**2 * np.cos( EMfine-phase_ex )**2
@@ -458,6 +482,8 @@ class Polim:
         Fetfine   /= np.sum(Fetfine)
     
         modelfine  = et * Fetfine + (1 - et) * Fnoetfine
+        
+        
     
         # note: np.sum(modelfine) = 1, np.sum(Fetfine) = 1, np.sum(Fnoetfine) = 1
         
