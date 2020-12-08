@@ -13,7 +13,7 @@ import random
 from Polim import Polim
 
 plt.rcParams.update({'font.size': 12})
-
+plt.close('all')
 # %%
 # small number of dipoles
 
@@ -23,10 +23,10 @@ plt.rcParams.update({'font.size': 12})
 
 # small number of dipolse (mainly for checking)
 # set dipole orientation
-theta = np.array([0, 20, 40])
+theta = np.array([0, 30, 60, 90])
 
 # select dipoles to excite by generate a logic matrix. 1 means excite, 0 means not excite.
-bl = np.array([1, 1, 1])
+bl = np.array([1, 1, 1, 1])
 bl = (bl == 1)
 assert np.size(bl) == np.size(theta), 'bl array is wrong'
 
@@ -34,9 +34,10 @@ assert np.size(bl) == np.size(theta), 'bl array is wrong'
 # set steady state ET matrix
 # set steady state ET matrix 
 # Note! In the paper and Rafael's program, the np.sum(et.matrix,1) = 1 always.
-et_matrix = np.matrix([[1.0, 0.0, 0.0],
-                       [0.0, 1.0, 0.0],
-                       [0.0, 0.0, 1.0]
+et_matrix = np.matrix([[1.0, 0.0, 0.0, 0.0],
+                       [0.0, 1.0, 0.0, 0.0],
+                       [0.0, 0.0, 1.0, 0.0],
+                       [0.0, 0.0, 0.0, 1.0]
                        ])
 assert np.sum(et_matrix) == np.size(theta), 'et_matrix is wrong'                
 
@@ -49,7 +50,7 @@ P.compute_2D_portrait()
 P.compute_M_phase_from_original_2D_portrait()
 
 # compute anisotropy for large systems (solution)
-P.compute_anisotropy_for_solution()
+# P.compute_anisotropy_for_solution()
 
 #  fit by SFA+3 model the results
 P.compute_SFA3()
@@ -65,6 +66,21 @@ P.plot_SFA3()
 
 # compare the funnel with dipoles
 # P.quick_check_funnel_and_dipoles()
+
+
+# P.compute_SFA3_unsymmetric()
+
+# # reconstruct et and noet 2D portrait  
+# P.reconstruct_Ftot_Fet_Fnoet_unsymmetric()
+
+# # plot original 2D portrait
+# P.plot_2D_portrait()
+
+# # plot SFA3 fitting results
+# P.plot_SFA3_unsymmetric()
+
+# # compare the funnel with dipoles
+# # P.quick_check_funnel_and_dipoles()
 
 # %%
 # large number of dipoles
