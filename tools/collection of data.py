@@ -9,29 +9,7 @@ Created on Sun Sep 06 10:34:59 2020
 
 import numpy as np
 import matplotlib.pyplot as plt
-
-plt.rcParams.update({'font.size': 16})
-
-# %%
-# 6. unsymmetric absorption. [0 60 70 90]
-# no et, the model does not work well.
-# et, the higher the et, the better the model.
-
-M	= np.array([0.9999, 0.9999,	0.9928, 0.9901, 0.9918, 0.9938,	0.9956, 0.9970, 0.9982, 0.9992,	0.9999])
-phase = np.array([1.6413, 1.2787, 1.1555, 1.1102,	1.0876, 1.0740, 1.0650, 1.0586,	1.0538, 1.0501, 1.0472])
-gr = np.array([3.4697, 3.4749, 3.4712,	3.4740, 3.4768, 3.4797, 3.4825,	3.4854, 3.4881, 3.4911, 1.0453])
-et = np.array([0.0001, 0.1076, 0.2005,	0.3001, 0.3998, 0.4996, 0.5995,	0.6994, 0.7995, 0.8997, 1.0000])
-resi = np.array([0.0355,	0.0311, 0.0277, 0.0242, 0.0207,	0.0173, 0.0138, 0.0104, 0.0069,	0.0035, 0.0000])
-
-phase_deg = phase * 180 / np.pi
-
-plt.figure()
-plt.plot(et, resi, 'ko-')
-plt.xlabel('et')
-plt.ylabel('resi')
-
-
-
+import addcopyfighandler
 # %%
 # 5. 'three dipoles' - a large system consisting of 1000 molecules
 # beta - Mex - et- anisotropy 
@@ -46,31 +24,21 @@ beta_r = beta * np.pi / 180
 Mex = np.array([1.00, 	0.93,	0.77,	0.50,	0.17,	0.00])
 portrait_r0 = np.array([0.386,	0.351,	0.273,	0.148,	0.069,	0.009])
 funnel_et = np.array([0.000,	0.060,	0.234,	0.501,	0.827,	1.000])
-
-r0 = (24.0 / 35.0) * np.cos(beta_r)**2 - (2.0 / 7.0)	
-et = (2 - 5 * r0)/(2 + r0)	
-et [et>=1.0] = 1	
-
-plt.figure()	plt.figure()
-plt.plot(beta, funnel_et, 'ro-')	plt.plot(beta, funnel_et, 'ro-')
-plt.plot(beta, et, 'k--')	
-
-plt.legend(['funnel et', 'analytical solution'])	
-plt.xlabel('beta (angle between the side and center dipoles)')	
-plt.ylabel('et')	
+residue = np.array([0.001,	0.001,	0.001,	0.001,	0.000,	0.000])
 
 
-plt.figure()	
-plt.plot(beta, portrait_r0, 'yo-')	plt.plot(beta, portrait_r0, 'yo-')
-plt.plot(beta, r0, 'k--')	
+fig, (ax1, ax2) = plt.subplots(2, 1, gridspec_kw = {'height_ratios':[3, 1]}, sharex=True, figsize = (9, 5))
 
+ax1.plot(Mex, funnel_et, 'ro-')
+ax1.plot(Mex, portrait_r0, 'go-')
+ax1.invert_xaxis()    
+ax1.legend(['funnel et', 'portrait r'])
 
-plt.legend(['r0 calculated from 2D portrait', 'analytical solution'])	plt.ylim([-0.5, 1.2])
-plt.xlabel('beta (angle between the side and center dipoles)')	plt.xlabel('beta (angle between the side and center dipoles)')
-plt.ylabel('r0')	plt.legend(['funnel et', 'r0'])
+ax2.plot(Mex, residue,'ko-')
+ax2.invert_xaxis() 
+ax2.legend(['residue'], loc='upper left')
+ax2.set_ylim([-0.02, 0.1])
 
-plt.figure()	plt.figure()
-plt.plot(Mex, funnel_et, 'ro-')
 
 
 
@@ -87,6 +55,7 @@ plt.plot(Mex, funnel_et, 'ro-')
 beta_deg = np.linspace(0, 180, 19)
 portrait_r0 = np.array([0.381,	0.352,	0.304,	0.175,	0.078,	-0.048,	-0.168,	-0.235,	-0.262,	-0.276,	-0.272,	-0.226,	-0.151,	-0.071,	0.080,	0.194,	0.265, 0.364, 0.406])
 funnel_et = np.array([0.000,	0.061,	0.234,	0.499,	0.826,	1.000,	1.000,	1.000,	1.000,	1.000,	1.000,	1.000,	1.000,	1.000,	0.827,	0.500,	0.234, 0.06, 0.00])
+residue = np.array([0.004,	0.005,	0.007,	0.007,	0.006,	0.016,	0.037,	0.056,	0.069,	0.074,	0.069,	0.056,	0.036,	0.014,	0.005,	0.006,	0.007,	0.007,	0.004])
 
 # theoritical solution
 beta_r = beta_deg * np.pi / 180
@@ -94,30 +63,21 @@ beta_r = beta_deg * np.pi / 180
 #r0 = 0.2 * (3 * np.cos(beta_r) **2 - 1)
 r0 = (24.0 / 35.0) * np.cos(beta_r)**2 - (2.0 / 7.0)
 et = (2 - 5 * r0)/(2 + r0)
-et [et>=1.0] = 1
+# et [et>=1.0] = 1
 
+fig, (ax1, ax2) = plt.subplots(2, 1, gridspec_kw = {'height_ratios':[3, 1]}, sharex=True, figsize = (9, 5))
 
-plt.figure()
-plt.plot(beta, funnel_et, 'ro-')
-plt.plot(beta, et, 'k--')
+ax1.plot(beta_deg[0:10], funnel_et[0:10], 'ro-')
+ax1.plot(beta_deg[0:10], et[0:10], 'ro--')
 
-plt.legend(['funnel et', 'analytical solution'])
-plt.xlabel('beta (angle between two dipoles)')
-plt.ylabel('et')
+ax1.plot(beta_deg[0:10], portrait_r0[0:10], 'go-')
+ax1.plot(beta_deg[0:10], r0[0:10], 'go--')
+ax1.legend(['funnel et', 'analytical et', 'portrait r', 'analytical r'])
 
-plt.figure()
-plt.plot(beta, portrait_r0, 'yo-')
-plt.plot(beta, r0, 'k--')
-
-plt.legend(['r0 calculated from 2D portrait', 'analytical solution'])
-plt.xlabel('beta (angle between two dipoles)')
-plt.ylabel('r0')
-
-
-plt.figure()
-plt.plot(funnel_et[0:9], portrait_r0[0:9], 'ko-')
-plt.xlabel('funnel et')
-plt.ylabel('portrait r0')
+ax2.plot(beta_deg[0:10], residue[0:10],'ko-')
+ax2.legend(['residue'])
+ax2.set_xlabel('\u03B2 (angle between two dipoles)')
+ax2.set_ylim([-0.02, 0.1])
 
 
 
@@ -191,4 +151,56 @@ plt.plot(x, y_M, 'ko-')
 plt.ylim([0, 1.2])
 plt.xlabel('N (number of systems)')
 plt.ylabel('funnel M')
+
+
+# %% ensemble isotropic level. 2D portrait in 3D. explain the relation between r and epsilon
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
+from matplotlib import cm
+from matplotlib.ticker import LinearLocator, FormatStrFormatter
+
+model = P.modelfine_output 
+Fet = P.Fetfine_output 
+Fnoet = P.Fnoetfine_output 
+I = np.sum(P.I_ex_em)
+
+exafine = np.linspace( 0, np.pi, 181 )
+emafine = np.linspace( 0, np.pi, 181 )
+EXfine, EMfine = np.meshgrid(exafine, emafine)
+
+
+fig1 = plt.figure()
+fig1.colorbar
+ax1 = fig1.add_subplot(111, projection='3d')
+surf1 = ax1.plot_surface(EXfine*180/np.pi, EMfine*180/np.pi, I*model/np.max(I*model), cmap=cm.viridis)
+surf1.set_clim(0, 1) 
+surf2 = ax1.plot_surface(EXfine*180/np.pi, EMfine*180/np.pi, 0.3*I*Fet/np.max(I*model), cmap=cm.viridis)
+surf2.set_clim(0, 1) 
+surf3 = ax1.plot_surface(EXfine*180/np.pi, EMfine*180/np.pi, 0.7*I*Fnoet/np.max(I*model), cmap=cm.viridis)
+surf2.set_clim(0, 1) 
+
+fig1.colorbar(surf1)
+
+
+                     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
