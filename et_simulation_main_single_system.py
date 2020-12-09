@@ -23,10 +23,10 @@ plt.close('all')
 
 # small number of dipolse (mainly for checking)
 # set dipole orientation
-theta = np.array([0, 30, 60, 90])
+theta = np.array([0, 90])
 
 # select dipoles to excite by generate a logic matrix. 1 means excite, 0 means not excite.
-bl = np.array([1, 1, 1, 1])
+bl = np.array([1, 1])
 bl = (bl == 1)
 assert np.size(bl) == np.size(theta), 'bl array is wrong'
 
@@ -34,10 +34,8 @@ assert np.size(bl) == np.size(theta), 'bl array is wrong'
 # set steady state ET matrix
 # set steady state ET matrix 
 # Note! In the paper and Rafael's program, the np.sum(et.matrix,1) = 1 always.
-et_matrix = np.matrix([[1.0, 0.0, 0.0, 0.0],
-                       [0.0, 1.0, 0.0, 0.0],
-                       [0.0, 0.0, 1.0, 0.0],
-                       [0.0, 0.0, 0.0, 1.0]
+et_matrix = np.matrix([[1.0, 0.0],
+                       [0.0, 1.0]                                       
                        ])
 assert np.sum(et_matrix) == np.size(theta), 'et_matrix is wrong'                
 
@@ -48,6 +46,7 @@ P = Polim(theta, bl, et_matrix)
 # compute2D portrait
 P.compute_2D_portrait()
 P.compute_M_phase_from_original_2D_portrait()
+
 
 # compute anisotropy for large systems (solution)
 # P.compute_anisotropy_for_solution()
@@ -68,6 +67,7 @@ P.plot_SFA3()
 # P.quick_check_funnel_and_dipoles()
 
 
+# # Unsymmetric model
 # P.compute_SFA3_unsymmetric()
 
 # # reconstruct et and noet 2D portrait  
@@ -86,7 +86,7 @@ P.plot_SFA3()
 # large number of dipoles
 
 # set dipole orientation
-theta = np.linspace(90, 180, 1000, endpoint = False)
+theta = np.linspace(0, 180, 1000, endpoint = False)
 # theta = np.array(random.sample(range(0, 180), 100))
 
 # select dipoles to excite by generate a logic matrix. 1 means excite, 0 means not excite.
@@ -104,9 +104,11 @@ assert np.size(bl) == np.size(theta), 'bl array is wrong'
 
 # ET: one or many funnels
 et_matrix_size = np.size(theta)
-et_matrix = np.matrix([[0.00 for x in range(et_matrix_size)] for y in range(et_matrix_size)] )
+et_matrix = np.matrix([[(1 - 0.7)/999 for x in range(et_matrix_size)] for y in range(et_matrix_size)] )
+np.fill_diagonal(et_matrix, 0.7)
+
 # emitter1 
-et_matrix[:, 999] = 1.0
+# et_matrix[:, 999] = 1.0
 # emitter2 
 #et_matrix[:,200] = 0.6 
 
@@ -122,7 +124,7 @@ et_matrix[:, 999] = 1.0
 #et_matrix_size = np.size(theta)
 #et_matrix = np.flip(np.eye(et_matrix_size, dtype = int), 1)
 
-assert np.sum(et_matrix) == np.size(theta), 'et_matrix is wrong' 
+#assert np.int(np.sum(et_matrix)) == np.size(theta), 'et_matrix is wrong' 
 
 
 plt.close('all')
@@ -150,6 +152,21 @@ P.plot_SFA3()
 
 # compare the funnel with dipoles
 # P.quick_check_funnel_and_dipoles()
+
+# # Unsymmetric model
+# P.compute_SFA3_unsymmetric()
+
+# # reconstruct et and noet 2D portrait  
+# P.reconstruct_Ftot_Fet_Fnoet_unsymmetric()
+
+# # plot original 2D portrait
+# P.plot_2D_portrait()
+
+# # plot SFA3 fitting results
+# P.plot_SFA3_unsymmetric()
+
+# # compare the funnel with dipoles
+# # P.quick_check_funnel_and_dipoles()
 
 # %% try to extrat the number of dipoles from 2D portrait
 

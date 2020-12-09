@@ -196,7 +196,9 @@ class Polim:
          # # print (UB)
 
          a0 = [M_ex, phase_ex, 1.0, 0.5, 0.5 * np.arccos( .5*(((1.0+2.0)*M_ex)-1.0) ), 0.5 * np.arccos( .5*(((1.0+2.0)*M_ex)-1.0) )]
-        
+         # a0 = [Mex, phaseex, gr, et, alfa, beta]
+         
+         
          # boundry
          LB = [0.000001, phase_ex - np.pi/2, 0.0000, 0.0000, phase_ex - np.pi/2, phase_ex - np.pi/2]     
          UB = [0.999999, phase_ex + np.pi/2, 2 * (1 + 0.9999*M_ex)/(1 - 0.9999*M_ex), 1.0000, phase_ex + np.pi/2, phase_ex + np.pi/2]        

@@ -225,6 +225,7 @@ def SFA_full_func( params, ex_angles, em_angles, md_ex, phase_ex ):
 
     return et*Fet + (1-et)*Fnoet
 
+
 def SFA_full_error( params, ex_angles, em_angles, md_ex, phase_ex, Ftot ):
     diff = Ftot - SFA_full_func( params, ex_angles, em_angles, md_ex, phase_ex )
 
