@@ -26,7 +26,7 @@ portrait_r0 = np.array([0.386,	0.351,	0.273,	0.148,	0.069,	0.009])
 funnel_et = np.array([0.000,	0.060,	0.234,	0.501,	0.827,	1.000])
 residue = np.array([0.001,	0.001,	0.001,	0.001,	0.000,	0.000])
 
-
+# one y axis
 fig, (ax1, ax2) = plt.subplots(2, 1, gridspec_kw = {'height_ratios':[3, 1]}, sharex=True, figsize = (9, 5))
 
 ax1.plot(Mex, funnel_et, 'ro-')
@@ -40,7 +40,29 @@ ax2.legend(['residue'], loc='upper left')
 ax2.set_ylim([-0.02, 0.1])
 
 
+# two y axis
+fig, (ax1, ax3) = plt.subplots(2, 1, gridspec_kw = {'height_ratios':[3, 1]}, sharex=True, figsize = (8.2, 6))
 
+ax1.set_ylabel('anisotropy', color = 'g')  # we already handled the x-label with ax1
+ax1.set_ylim(-0.285714, 0.40)
+ax1.plot(Mex, portrait_r0, 'go-')
+ax1.tick_params(axis='y', labelcolor='g')
+ax1.legend(['portrait r', 'analytical r'], bbox_to_anchor=(-0.55, 0.3, 0.8, 0.5))
+
+ax2 = ax1.twinx()  
+
+ax2.set_ylabel('energy transfer efficiency', color='r')
+ax2.plot(Mex, funnel_et, 'ro-')
+ax2.tick_params(axis='y', labelcolor='r')
+ax2.set_ylim (0.0, 2.0)
+ax2.legend(['funnel et', 'analytical et'], bbox_to_anchor=(-0.55, -0.2, 0.8, 0.5) ) 
+
+ax3.plot(Mex, residue,'ko-')
+ax3.legend(['residue'])
+ax3.set_xlabel('Mex')
+ax3.set_ylim([-0.01, 0.1])
+
+ax1.invert_xaxis() 
 
 # %%
 # 4.'two dipoles' - a large system consisting of 1000 molecules
@@ -80,6 +102,78 @@ ax2.set_xlabel('\u03B2 (angle between two dipoles)')
 ax2.set_ylim([-0.02, 0.1])
 
 
+# two y axis
+fig, (ax1, ax3) = plt.subplots(2, 1, gridspec_kw = {'height_ratios':[3, 1]}, sharex=True, figsize = (8.2, 6))
+
+ax1.set_ylabel('anisotropy', color = 'g')  # we already handled the x-label with ax1
+ax1.set_ylim(-0.285714, 0.40)
+ax1.plot(beta_deg[0:10], portrait_r0[0:10], 'go-')
+ax1.plot(beta_deg[0:10], r0[0:10], 'g--')
+ax1.tick_params(axis='y', labelcolor='g')
+ax1.legend(['portrait r', 'analytical r'], bbox_to_anchor=(0.0, 0.35, 0.5, 0.5))
+
+ax2 = ax1.twinx()  
+
+ax2.set_ylabel('energy transfer efficiency', color='r')
+ax2.plot(beta_deg[0:10], funnel_et[0:10], 'ro-')
+ax2.plot(beta_deg[0:10], et[0:10], 'r--')
+ax2.tick_params(axis='y', labelcolor='r')
+ax2.set_ylim (0.0, 2.0)
+ax2.legend(['funnel et', 'analytical et'], bbox_to_anchor=(0.0, -0.2, 0.5, 0.5)) 
+
+
+ax3.plot(beta_deg[0:10], residue[0:10],'ko-')
+ax3.legend(['residue'])
+ax3.set_xlabel('\u03B2 (angle between two dipoles)')
+ax3.set_ylim([0.0, 0.1])
+
+# %%
+# 4.'two dipoles' - a large system consisting of 1000 molecules
+# Epsilon is larger than 1
+# beta - et- anisotropy 
+# nReplicates = 1
+# bl = np.array([1, 0])
+# et_matrix = np.matrix([[0.0, 1.0],
+#                       [0.0, 1.0]])
+# N_system = np.array([1000])
+
+
+beta_deg = np.array([0, 10, 20, 30, 40, 50, 60, 70, 80, 90])
+portrait_r0 = np.array([0.405,	0.368,	0.292,	0.206,	0.066,	-0.040,	-0.170,	-0.245,	-0.273,	-0.286])
+funnel_et = np.array([0.000,	0.060,	0.234,	0.499,	0.826,	1.173,	1.500,	1.767,	1.940,	2.000])
+residue = np.array([0.002,	0.003,	0.001,	0.002,	0.001,	0,	0,	0.002,	0.002,	0.001])
+
+# theoritical solution
+beta_r = beta_deg * np.pi / 180
+
+#r0 = 0.2 * (3 * np.cos(beta_r) **2 - 1)
+r0 = (24.0 / 35.0) * np.cos(beta_r)**2 - (2.0 / 7.0)
+et = (2 - 5 * r0)/(2 + r0)
+# et [et>=1.0] = 1
+
+fig, (ax1, ax3) = plt.subplots(2, 1, gridspec_kw = {'height_ratios':[3, 1]}, sharex=True, figsize = (8.2, 6))
+
+ax1.set_ylabel('anisotropy', color = 'g')  # we already handled the x-label with ax1
+ax1.set_ylim(-0.285714, 0.40)
+ax1.plot(beta_deg[0:10], portrait_r0[0:10], 'go-')
+ax1.plot(beta_deg[0:10], r0[0:10], 'g--')
+ax1.tick_params(axis='y', labelcolor='g')
+ax1.legend(['portrait r', 'analytical r'], bbox_to_anchor=(0.0, 0.35, 0.5, 0.5))
+
+ax2 = ax1.twinx()  
+
+ax2.set_ylabel('energy transfer efficiency', color='r')
+ax2.plot(beta_deg[0:10], funnel_et[0:10], 'ro-')
+ax2.plot(beta_deg[0:10], et[0:10], 'r--')
+ax2.tick_params(axis='y', labelcolor='r')
+ax2.set_ylim (0.0, 2.0)
+ax2.legend(['funnel et', 'analytical et'], bbox_to_anchor=(0.0, -0.1, 0.5, 0.5)) 
+
+
+ax3.plot(beta_deg[0:10], residue[0:10],'ko-')
+ax3.legend(['residue'])
+ax3.set_xlabel('\u03B2 (angle between two dipoles)')
+ax3.set_ylim([-0.01, 0.1])
 
 # %%
 ## 3. plot epsilon - N  for different anglesv(angle12)
@@ -158,17 +252,19 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 model = P.modelfine_output 
 Fet = P.Fetfine_output 
 Fnoet = P.Fnoetfine_output 
 I = np.sum(P.I_ex_em)
 
+
 exafine = np.linspace( 0, np.pi, 181 )
 emafine = np.linspace( 0, np.pi, 181 )
 EXfine, EMfine = np.meshgrid(exafine, emafine)
 
-
+## 3D
 fig1 = plt.figure()
 fig1.colorbar
 ax1 = fig1.add_subplot(111, projection='3d')
@@ -182,10 +278,32 @@ surf2.set_clim(0, 1)
 fig1.colorbar(surf1)
 
 
-                     
-
-
-
+## 2D
+fig, (ax1, ax2, ax3) = plt.subplots(figsize = (17, 4), ncols = 3)
+h_model = ax1.imshow(I * model)
+vmax = 375.5551077660677        
+h_model.set_clim(0, vmax)        
+ax1.invert_yaxis()       
+ax1.set_title('model')       
+divider1 = make_axes_locatable(ax1)
+cax1 = divider1.append_axes("right", size="5%", pad=0.05)
+fig.colorbar(h_model, cax = cax1, ax = ax1)
+                
+h_Fet = ax2.imshow(0.4 * I * Fet)
+h_Fet.set_clim(0, vmax)    
+ax2.invert_yaxis()       
+ax2.set_title('Fet')       
+divider2 = make_axes_locatable(ax2)
+cax2 = divider2.append_axes("right", size="5%", pad=0.05)
+fig.colorbar(h_Fet, cax = cax2, ax = ax2)
+        
+h_Fnoet = ax3.imshow(0.6 * I * Fnoet)
+h_Fnoet.set_clim(0, vmax)    
+ax3.invert_yaxis()       
+ax3.set_title('Fnoet')       
+divider3 = make_axes_locatable(ax3)
+cax3 = divider3.append_axes("right", size="5%", pad=0.05)
+fig.colorbar(h_Fnoet, cax = cax3, ax = ax3)
 
 
 
